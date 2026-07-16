@@ -1,0 +1,99 @@
+.App {
+  min-height: 100vh;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: #1c2a1e;
+  background: #fdfaf3;
+}
+
+.font-display {
+  font-family: 'Fraunces', 'Playfair Display', Georgia, serif;
+  font-feature-settings: 'ss01' on, 'ss02' on;
+  letter-spacing: -0.01em;
+}
+
+.font-body {
+  font-family: 'Inter', sans-serif;
+}
+
+/* Honeycomb subtle background pattern */
+.honeycomb-bg {
+  background-image:
+    radial-gradient(circle at 20% 20%, rgba(212, 163, 60, 0.06) 0%, transparent 40%),
+    radial-gradient(circle at 80% 60%, rgba(45, 90, 61, 0.06) 0%, transparent 40%);
+}
+
+/* Section reveal */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.9s ease, transform 0.9s ease;
+}
+.reveal.in-view {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Marquee */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.marquee-track {
+  animation: marquee 40s linear infinite;
+}
+
+/* Ken burns */
+@keyframes kenburns {
+  0% { transform: scale(1.05) translate(0, 0); }
+  50% { transform: scale(1.12) translate(-1%, -1%); }
+  100% { transform: scale(1.05) translate(0, 0); }
+}
+.kenburns { animation: kenburns 18s ease-in-out infinite; }
+
+/* Card hover lift */
+.lift {
+  transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.5s ease;
+}
+.lift:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 25px 45px -20px rgba(28, 42, 30, 0.25);
+}
+
+/* Link underline */
+.link-underline {
+  position: relative;
+  display: inline-block;
+}
+.link-underline::after {
+  content: '';
+  position: absolute;
+  left: 0; bottom: -3px;
+  width: 100%; height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.link-underline:hover::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+/* Selection */
+::selection { background: #d4a33c; color: #1c2a1e; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: #fdfaf3; }
+::-webkit-scrollbar-thumb { background: #cbd5c6; border-radius: 8px; }
+::-webkit-scrollbar-thumb:hover { background: #8ea991; }
+
+/* Number ticker */
+.tabular { font-variant-numeric: tabular-nums; }
