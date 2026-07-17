@@ -12,14 +12,45 @@ const Resources = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Debounced fetch
+// Debounced fetch (API कॉल बंद करून डमी डेटा सेट केला आहे)
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
-    const t = setTimeout(async () => {
-      const res = await api.listPosts({ category: cat, q: q.trim() || undefined });
+    const t = setTimeout(() => {
       if (!cancelled) {
-        setPosts(res.ok ? res.data : []);
+        // api.listPosts ऐवजी आपण थेट डिझाईन बघण्यासाठी डमी डेटा (Dummy Data) टाकत आहोत
+        setPosts([
+          {
+            id: 1,
+            title: "Conservation of Stingless Bees in the Western Ghats",
+            category: "Pollinators",
+            excerpt: "A comprehensive guide on creating habitats for stingless bees and promoting local biodiversity.",
+            image: "/images/stingless.jpg",
+            date: "Upcoming",
+            readTime: "5 min",
+            author: "BEPCoR Team"
+          },
+          {
+            id: 2,
+            title: "Solar-Powered Irrigation Systems for Sustainable Agriculture",
+            category: "How-To",
+            excerpt: "Exploring the benefits and installation of solar water pumps for sustainable farming.",
+            image: "/images/solar.jpg",
+            date: "Upcoming",
+            readTime: "8 min",
+            author: "BEPCoR Team"
+          },
+          {
+            id: 3, // नवीन ऍड केलेला डेटा
+            title: "Designing Bamboo Nests for Carpenter Bees",
+            category: "Pollinators",
+            excerpt: "Step-by-step guide to building sustainable bamboo houses to attract and protect native carpenter bees in local farms.",
+            image: "/images/anna.jpg",
+            date: "Upcoming", // तुम्ही सांगितल्याप्रमाणे बदल
+            readTime: "6 min",
+            author: "BEPCoR Team"
+          }
+        ]);
         setLoading(false);
       }
     }, 300);
