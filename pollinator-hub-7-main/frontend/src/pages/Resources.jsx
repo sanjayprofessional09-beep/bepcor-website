@@ -42,7 +42,7 @@ const Resources = () => {
       <section className="pt-40 pb-16 bg-[#f7f2e4] border-b border-[#eee6d3]">
         <div className="max-w-7xl mx-auto px-5 md:px-8">
           <div className="text-xs uppercase tracking-[0.24em] text-[#2d5a3d] mb-5">Field Journal</div>
-          <h1 className="font-display text-5xl md:text-7xl leading-[0.98] text-[#1c2a1e] max-w-4xl">
+          <h1 className="font-display text-4xl md:text-6xl leading-[0.98] text-[#1c2a1e] max-w-4xl">
             Notes, essays and research from the field.
           </h1>
           <p className="mt-6 text-lg text-[#4a5a4c] max-w-2xl leading-relaxed">

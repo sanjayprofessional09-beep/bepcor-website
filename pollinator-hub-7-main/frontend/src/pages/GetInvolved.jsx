@@ -78,7 +78,7 @@ const GetInvolved = () => {
             <div className="text-xs uppercase tracking-[0.24em] text-[#2d5a3d] mb-5 flex items-center gap-2">
               <Heart className="w-3.5 h-3.5" /> Get Involved
             </div>
-            <h1 className="font-display text-5xl md:text-7xl leading-[0.98] text-[#1c2a1e]">Bee the change.</h1>
+            <h1 className="font-display text-4xl md:text-6xl leading-[0.98] text-[#1c2a1e]">Bee the change.</h1>
             <p className="mt-6 text-lg text-[#4a5a4c] max-w-lg leading-relaxed">
               Donate, volunteer, partner or simply plant a pollinator garden. Every meaningful action moves this work forward.
             </p>

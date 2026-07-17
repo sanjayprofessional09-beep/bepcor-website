@@ -62,7 +62,7 @@ const Footer = () => {
         <div className="grid md:grid-cols-4 gap-10 py-14">
           <div>
             <Link to="/" className="flex items-center gap-3">
-              <img src={BRAND_LOGO} alt="BEPCoR" className="w-11 h-11 object-contain bg-white/10 rounded-lg p-1" />
+              <img src="/images/bepcorwhite.png" alt="BEPCoR" className="w-12 h-12 object-contain bg-white/10 rounded-lg p-1"/>
               <div className="font-display text-2xl font-bold text-white">BEPCoR</div>
             </Link>
             <p className="mt-5 text-sm text-[#c8c0a8] leading-relaxed">

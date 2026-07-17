@@ -19,7 +19,7 @@ const About = () => {
       <section className="pt-40 pb-24 bg-[#f7f2e4] border-b border-[#eee6d3]">
         <div className="max-w-7xl mx-auto px-5 md:px-8">
           <div className="text-xs uppercase tracking-[0.24em] text-[#2d5a3d] mb-5">About BEPCoR</div>
-          <h1 className="font-display text-5xl md:text-7xl lg:text-[88px] leading-[0.98] text-[#1c2a1e] max-w-4xl">
+          <h1 className="font-display text-4xl md:text-6xl lg:text-[88px] leading-[0.98] text-[#1c2a1e] max-w-4xl">
             A quiet foundation for a noisier, healthier ecosystem.
           </h1>
           <p className="mt-8 text-lg md:text-xl text-[#4a5a4c] max-w-3xl leading-relaxed">

@@ -30,7 +30,7 @@ export const heroSlides = [
   },
   {
     id: 2,
-    image: 'https://images.pexels.com/photos/2260933/pexels-photo-2260933.jpeg',
+    image: '/images/community.jpg',
     eyebrow: 'Beekeeping · Biodiversity · Livelihoods',
     title: 'Where Nature Meets Community',
     subtitle: 'Empowering 2,000+ farmers, women and youth through native bee-based enterprises in tribal and rural India.',
@@ -102,7 +102,7 @@ export const pollinatorGroups = [
     id: 'abiotic',
     title: 'Abiotic (Non-living)',
     lead: 'Some plants do not need animals — the elements themselves carry pollen.',
-    image: 'https://images.pexels.com/photos/32633821/pexels-photo-32633821.jpeg',
+    image: '/images/abiotic.jpg',
     items: [
       { name: 'Wind', desc: 'Sugarcane, maize, wheat, rice and many grasses are wind-pollinated.' },
       { name: 'Water', desc: 'Aquatic plants such as seagrasses are pollinated by water currents.' },
@@ -117,7 +117,7 @@ export const programs = [
     tag: 'Conservation',
     image: '/images/bamboonesting.jpg',
     summary: 'A flagship landscape campaign to map, protect and revive pollinator populations across Western Maharashtra — bees, butterflies, moths, sunbirds and bats.',
-    outcomes: ['12 districts under active mapping', 'Village-level pollinator councils', 'Chemical-free zones with farmers'],
+    outcomes: ['9 districts under active mapping', 'Village-level pollinator councils', 'Chemical-free zones with farmers'],
   },
   {
     id: 'beekeeping',
@@ -133,7 +133,7 @@ export const programs = [
     tag: 'Education',
     image: '/images/estem.jpg',
     summary: 'An Ecology-STEM curriculum bringing pollinators, food systems and climate literacy into classrooms across Maharashtra, Karnataka and Tamil Nadu.',
-    outcomes: ['45 partner schools', '12,000+ students engaged', 'Teacher training modules'],
+    outcomes: ['26 partner schools', '6,000+ students engaged', 'Teacher training modules'],
   },
   {
     id: 'gardens',
@@ -141,7 +141,7 @@ export const programs = [
     tag: 'Conservation',
     image: '/images/gardens.jpg',
     summary: 'Designing native flowering habitats in campuses, farms and public spaces to bring pollinators back to our neighbourhoods.',
-    outcomes: ['120+ gardens created', '80+ native plant species', 'Community garden guilds'],
+    outcomes: ['60+ gardens created', '80+ native plant species', 'Community garden guilds'],
   },
   {
     id: 'research',
@@ -149,7 +149,7 @@ export const programs = [
     tag: 'Research',
     image: '/images/research.jpg',
     summary: 'Collaborative baseline studies on native pollinators of the Western Ghats with universities and forest departments across three states.',
-    outcomes: ['4 peer-reviewed studies', 'Open pollinator dataset', 'Citizen scientist network'],
+    outcomes: ['2 peer-reviewed studies', 'Open pollinator dataset', 'Citizen scientist network'],
   },
   {
     id: 'women',
@@ -157,15 +157,15 @@ export const programs = [
     tag: 'Livelihoods',
     image: '/images/sbigrant.jpg',
     summary: 'A women-led enterprise programme building honey-based micro-businesses across MH, KA and TN.',
-    outcomes: ['12 women collectives', '₹11 lakh SBI Foundation grant', 'Ethical honey brand'],
+    outcomes: ['25 women collectives', '₹11 lakh SBI Foundation grant', 'Ethical honey brand'],
   },
   {
     id: 'restoration',
     title: 'Landscape Restoration',
     tag: 'Conservation',
-    image: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09',
+    image: '/images/beehotels.jpg',
     summary: 'Restoring degraded common lands with native flora that supports pollinators, water and rural economies.',
-    outcomes: ['65 hectares under restoration', '15,000+ native saplings', 'Village restoration plans'],
+    outcomes: ['45 hectares under restoration', '7,000+ native saplings', 'Village restoration plans'],
   },
 ];
 

@@ -74,7 +74,7 @@ const Home = () => {
               <span className="w-1.5 h-1.5 rounded-full bg-[#d4a33c] animate-pulse" />
               {cur.eyebrow}
             </div>
-            <h1 className="font-display text-white text-5xl md:text-7xl lg:text-[88px] leading-[0.98] font-bold">
+            <h1 className="font-display text-white text-4xl md:text-6xl lg:text-[88px] leading-[0.98] font-bold">
               {cur.title}
             </h1>
             <p className="mt-6 text-white/85 text-lg md:text-xl max-w-2xl leading-relaxed">
