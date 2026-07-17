@@ -43,7 +43,7 @@ const Contact = () => {
       <section className="pt-40 pb-16 bg-[#f7f2e4] border-b border-[#eee6d3]">
         <div className="max-w-7xl mx-auto px-5 md:px-8">
           <div className="text-xs uppercase tracking-[0.24em] text-[#2d5a3d] mb-5">Contact</div>
-          <h1 className="font-display text-5xl md:text-7xl leading-[0.98] text-[#1c2a1e] max-w-3xl">
+          <h1 className="font-display text-4xl md:text-6xl leading-[0.98] text-[#1c2a1e] max-w-3xl">
             Let’s start a conversation.
           </h1>
           <p className="mt-6 text-lg text-[#4a5a4c] max-w-2xl leading-relaxed">
@@ -92,7 +92,7 @@ const Contact = () => {
             </div>
 
             <div className="mt-10 rounded-2xl overflow-hidden border border-[#eee6d3]">
-              <img src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09" alt="Field" className="w-full h-56 object-cover" />
+              <img src="/images/madhushakti.jpg" alt="Field" className="w-full h-56 object-cover" />
             </div>
           </div>
 

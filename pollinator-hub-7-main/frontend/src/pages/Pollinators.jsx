@@ -22,18 +22,18 @@ const Pollinators = () => {
             <div className="text-xs uppercase tracking-[0.24em] text-[#2d5a3d] mb-5 flex items-center gap-2">
               <Leaf className="w-3.5 h-3.5" /> Who We Conserve
             </div>
-            <h1 className="font-display text-5xl md:text-7xl leading-[0.98] text-[#1c2a1e]">
+            <h1 className="font-display text-4xl md:text-6xl leading-[0.98] text-[#1c2a1e]">
               The many messengers of life.
             </h1>
             <p className="mt-8 text-lg text-[#4a5a4c] leading-relaxed">
               Pollination is a crucial process in the reproduction of plants and crops. In nature, many living organisms and natural elements help this quiet, essential work. BEPCoR conserves them all — not just honeybees.
             </p>
           </div>
-          <div className="grid grid-cols-2 gap-3">
-            <img src="https://images.unsplash.com/photo-1589526261866-ab0d34f8dc19?crop=entropy&cs=srgb&fm=jpg&q=85" alt="Bee" className="w-full h-64 object-cover rounded-2xl translate-y-6" />
-            <img src="https://images.unsplash.com/photo-1490750967868-88aa4486c946" alt="Butterfly on flower" className="w-full h-64 object-cover rounded-2xl" />
-            <img src="https://images.pexels.com/photos/32633821/pexels-photo-32633821.jpeg" alt="Wildflowers" className="w-full h-64 object-cover rounded-2xl" />
-            <img src="https://images.pexels.com/photos/27418555/pexels-photo-27418555.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940" alt="Bee" className="w-full h-64 object-cover rounded-2xl translate-y-6" />
+          <div className="grid grid-cols-2 gap-8">
+            <img src="/images/sadhupatil.jpg" alt="Bee" className="w-full h-64 object-cover rounded-2xl" />
+            <img src="/images/conservator.jpg" alt="Butterfly on flower" className="w-full h-64 object-cover rounded-2xl" />
+            <img src="/images/westernghats.jpg" alt="Wildflowers" className="w-full h-64 object-cover rounded-2xl" />
+            <img src="/images/sanjaybee.jpg" alt="Bee" className="w-full h-64 object-cover rounded-2xl" />
           </div>
         </div>
       </section>
