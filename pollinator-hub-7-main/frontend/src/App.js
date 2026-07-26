@@ -34,6 +34,7 @@ function App() {
             <Route path="/resources" element={<Resources />} />
             <Route path="/resources/:slug" element={<Resources />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="*" element={<h1>404 - Page Not Found</h1>} />
           </Routes>
         </main>
         <Footer />

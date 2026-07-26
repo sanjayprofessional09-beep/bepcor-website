@@ -1,6 +1,7 @@
 {
-  "name": "frontend",
+  "name": "bepcor-website",
   "version": "0.1.0",
+  "homepage": "https://bepcor.org",
   "private": true,
   "dependencies": {
     "@hookform/resolvers": "5.0.1",
