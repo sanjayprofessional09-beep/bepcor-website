@@ -63,7 +63,7 @@ const About = () => {
       <section className="py-24 bg-[#f7f2e4]">
         <div className="max-w-7xl mx-auto px-5 md:px-8 grid md:grid-cols-3 gap-6">
           {[
-            { Icon: Target, title: 'Vision', text: 'A living, connected planet where pollinators, people and place-based knowledge thrive together.' },
+            { Icon: Target, title: 'Vision', text: 'Nurturing a living planet through the harmony of people, pollinators, and local wisdom.' },
             { Icon: Leaf, title: 'Mission', text: 'To conserve native pollinators through ecoliteracy, research and community-led rural enterprises.' },
             { Icon: Sparkles, title: 'Values', text: 'Rooted, honest, patient. We move at the pace of trust and the seasons of the land.' },
           ].map((v, i) => (

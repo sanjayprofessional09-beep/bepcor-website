@@ -189,8 +189,8 @@ export const blogPosts = [
 export const team = [
   { name: 'Teja Ghorpade', role: 'Co-Founder & Director', image: '/images/tejaghorpade.jpg', bio: 'Ecologist, beekeeper, and social entrepreneur working at the crossroads of biodiversity and rural livelihoods.' },
   { name: 'Sanjay Ghorpade', role: 'Co-Founder & Director', image: '/images/sanjayghorpade.jpg', bio: 'Pollinator consultancy expert with 10+ years of field experience across the Western Ghats.' },
-  { name: 'Pravin Dongave', role: 'Educational Expert', image: '/images/pravin.jpg', bio: 'Designs BEPCoR community and school interventions across MH, KA & TN.' },
-  { name: 'Kunal Pardesi', role: 'Thematic Expert water resources and management', image: '/images/kunal.jpg', bio: 'Trains collectives and runs the Madhu Shakti enterprise programme.' },
+  { name: 'Pravin Dongawe', role: 'Educational Expert', image: '/images/pravin.jpg', bio: 'Designs BEPCoR community and school interventions across MH, KA & TN.' },
+  { name: 'Kunal Pardeshi', role: 'Thematic Expert water resources and management', image: '/images/kunal.jpg', bio: 'Brings valuable insights from the water sector, acting as a trusted mentor and advisor to the organization.' },
 ];
 
 export const faqs = [

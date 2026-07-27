@@ -6,7 +6,7 @@ import { Textarea } from '../components/ui/textarea';
 import { Label } from '../components/ui/label';
 import { toast } from '../hooks/use-toast';
 import { siteInfo } from '../data/mock';
-import api from '../lib/api';
+import api from '../lib/api'; // जुना इम्पोर्ट तसाच ठेवला आहे जेणेकरून एरर येणार नाही
 
 const Contact = () => {
   const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
@@ -21,20 +21,42 @@ const Contact = () => {
 
   const submit = async (e) => {
     e.preventDefault();
+    
+    // जर फॉर्म पूर्ण भरला नसेल तर एरर दाखवणे
     if (!form.name || !form.email || !form.message) {
       toast({ title: 'Please fill in your name, email and message', variant: 'destructive' });
       return;
     }
+    
     setBusy(true);
-    const res = await api.sendContact({
-      name: form.name, email: form.email, subject: form.subject || undefined, message: form.message,
-    });
-    setBusy(false);
-    if (res.ok) {
+
+    // तुमची नवीन Google Apps Script लिंक
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwK_dBd4EYYKfsMA_LAdLZtkp2M9cvqT-XDtD6fVWe2fhQrfmcJyjuKCmmcQBtiDqKc/exec";
+
+    try {
+      const formData = new FormData();
+      formData.append('name', form.name);
+      formData.append('email', form.email);
+      formData.append('subject', form.subject || '');
+      formData.append('message', form.message);
+
+      // गुगल शीटला डेटा पाठवणे
+      await fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        body: formData,
+        mode: 'no-cors' 
+      });
+
+      // मेसेज यशस्वीरित्या गेल्यावर दिसणारी सूचना
       toast({ title: 'Message sent', description: `Thank you, ${form.name}. We usually reply within 2 working days.` });
+      
+      // फॉर्म रिकामा करणे
       setForm({ name: '', email: '', subject: '', message: '' });
-    } else {
-      toast({ title: 'Could not send message', description: res.error, variant: 'destructive' });
+    } catch (error) {
+      console.error("Error submitting to Google Sheets:", error);
+      toast({ title: 'Could not send message', description: 'Please try again later.', variant: 'destructive' });
+    } finally {
+      setBusy(false);
     }
   };
 

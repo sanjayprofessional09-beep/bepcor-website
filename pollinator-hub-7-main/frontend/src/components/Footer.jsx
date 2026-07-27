@@ -5,7 +5,7 @@ import { Input } from './ui/input';
 import { Button } from './ui/button';
 import { toast } from '../hooks/use-toast';
 import { siteInfo, BRAND_LOGO } from '../data/mock';
-import api from '../lib/api';
+import api from '../lib/api'; // तुमचा जुना API import तसाच ठेवला आहे
 
 const Footer = () => {
   const [email, setEmail] = useState('');
@@ -17,14 +17,31 @@ const Footer = () => {
       toast({ title: 'Please enter a valid email', variant: 'destructive' });
       return;
     }
+    
     setBusy(true);
-    const res = await api.subscribeNewsletter(email);
-    setBusy(false);
-    if (res.ok) {
+    
+    // तुम्ही दिलेली Google Apps Script लिंक
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwXwW9CxCIvycJ3Bfry61sdvQ7UMVN4T6H0nYpBj60_BJ885rk07MDynm1_lLjplRTY/exec";
+
+    try {
+      const formData = new FormData();
+      formData.append('email', email);
+      formData.append('timestamp', new Date().toLocaleString());
+
+      // थेट गुगल शीटला डेटा पाठवणे
+      await fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        body: formData,
+        mode: 'no-cors' 
+      });
+
       toast({ title: 'Subscribed! Welcome to the swarm.', description: 'You will hear from us once a month, never more.' });
       setEmail('');
-    } else {
-      toast({ title: res.status === 409 ? 'Already subscribed' : 'Could not subscribe', description: res.error, variant: 'destructive' });
+    } catch (error) {
+      console.error("Error submitting to Google Sheets:", error);
+      toast({ title: 'Could not subscribe', description: 'Please try again later.', variant: 'destructive' });
+    } finally {
+      setBusy(false);
     }
   };
 
