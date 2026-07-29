@@ -170,7 +170,7 @@ export const programs = [
 ];
 
 export const impactStories = [
-  { id: 1, name: 'Rani Tai, Gaganbawada, Garivade', role: 'Beekeeper & Trainer', quote: 'Before BEPCoR I sold vegetables at a loss. Today my honey travels to Pune and Mumbai — and my daughter is studying to be an ecologist.', image: 'https://images.pexels.com/photos/2260933/pexels-photo-2260933.jpeg' },
+  { id: 1, name: 'Rani Tai, Gaganbawada, Garivade', role: 'Beekeeper & Trainer', quote: 'Before BEPCoR I sold vegetables at a loss. Today my honey travels to Pune and Mumbai.', image: 'https://images.pexels.com/photos/2260933/pexels-photo-2260933.jpeg' },
   { id: 2, name: 'Aarav, Std 8, Ankali, Karnatka', role: 'E-STEM Student', quote: 'I never noticed bees. Now our school garden has 22 pollinator species — I counted them myself.', image: 'https://images.unsplash.com/photo-1504392022767-a8fc0771f239?crop=entropy&cs=srgb&fm=jpg&q=85' },
   { id: 3, name: 'Dr. Sidanand V Kambhar', role: 'Research Partner', quote: 'BEPCoR bridges what universities cannot — trust with communities, and honest field data at a landscape scale.', image: 'https://images.unsplash.com/photo-1593069567131-53a0614dde1d' },
 ];
