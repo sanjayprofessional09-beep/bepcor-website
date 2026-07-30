@@ -41,4 +41,64 @@
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
     </body>
+    <!-- Cookie Consent Banner Start -->
+    <style>
+      #cookie-banner {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background-color: #1c2a1e; /* BEPCoR Dark Green */
+        color: #e8e0c8;
+        padding: 16px 20px;
+        text-align: center;
+        z-index: 9999;
+        display: none;
+        box-shadow: 0 -4px 15px rgba(0,0,0,0.1);
+        font-family: 'Inter', sans-serif;
+      }
+      #cookie-banner p {
+        display: inline-block;
+        margin: 0 20px 0 0;
+        font-size: 14px;
+      }
+      #cookie-accept-btn {
+        background-color: #d4a33c; /* BEPCoR Gold */
+        color: #1c2a1e;
+        border: none;
+        padding: 8px 24px;
+        border-radius: 25px;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+      #cookie-accept-btn:hover {
+        background-color: #c09330;
+      }
+      @media (max-width: 768px) {
+        #cookie-banner p { display: block; margin: 0 0 12px 0; line-height: 1.5; }
+      }
+    </style>
+    
+    <div id="cookie-banner">
+      <p>We use cookies to improve your experience and analyze website traffic. By continuing to use this site, you consent to our use of cookies.</p>
+      <button id="cookie-accept-btn">Accept Cookies</button>
+    </div>
+    
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+        // जर युजरने आधी Accept केले नसेल, तर बॅनर दाखवा
+        if (!localStorage.getItem("bepcorCookiesAccepted")) {
+          document.getElementById("cookie-banner").style.display = "block";
+        }
+        
+        // Accept बटनावर क्लिक केल्यावर काय होईल
+        document.getElementById("cookie-accept-btn").addEventListener("click", function() {
+          localStorage.setItem("bepcorCookiesAccepted", "true"); // ब्राउझरमध्ये सेव्ह करा
+          document.getElementById("cookie-banner").style.display = "none"; // बॅनर लपवा
+        });
+      });
+    </script>
+    <!-- Cookie Consent Banner End -->
 </html>
