@@ -9,6 +9,9 @@ import { toast } from '../hooks/use-toast';
 import { donationTiers } from '../data/mock';
 import api from '../lib/api';
 
+// --- नवीन: QR Code लायब्ररी इम्पोर्ट केली ---
+import { QRCodeSVG } from 'qrcode.react';
+
 const GetInvolved = () => {
   const [amount, setAmount] = useState(2500);
   const [custom, setCustom] = useState('');
@@ -18,12 +21,25 @@ const GetInvolved = () => {
   const [volForm, setVolForm] = useState({ name: '', email: '', interest: 'Field Volunteer', message: '' });
   const [volBusy, setVolBusy] = useState(false);
 
+  const [showModal, setShowModal] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(120);
+
   useEffect(() => {
     const els = document.querySelectorAll('.reveal');
     const io = new IntersectionObserver((entries) => entries.forEach((e) => e.isIntersecting && e.target.classList.add('in-view')), { threshold: 0.12 });
     els.forEach((el) => io.observe(el));
     return () => io.disconnect();
   }, []);
+
+  useEffect(() => {
+    let timer;
+    if (showModal && timeLeft > 0) {
+      timer = setInterval(() => setTimeLeft(prev => prev - 1), 1000);
+    } else if (timeLeft === 0) {
+      setShowModal(false);
+    }
+    return () => clearInterval(timer);
+  }, [showModal, timeLeft]);
 
   const donate = async (e) => {
     e.preventDefault();
@@ -36,19 +52,9 @@ const GetInvolved = () => {
       toast({ title: 'Please enter a valid amount', variant: 'destructive' });
       return;
     }
-    setDonorBusy(true);
-    const tierLabel = donationTiers.find((t) => t.amount === final)?.label;
-    const res = await api.createDonation({
-      name: donor.name, email: donor.email, phone: donor.phone || undefined, amount: final, tier: tierLabel,
-    });
-    setDonorBusy(false);
-    if (res.ok) {
-      toast({ title: `Thank you, ${donor.name}!`, description: `Your ₹${final.toLocaleString()} donation is being processed. A receipt will reach ${donor.email}.` });
-      setDonor({ name: '', email: '', phone: '' });
-      setCustom('');
-    } else {
-      toast({ title: 'Could not record donation', description: res.error, variant: 'destructive' });
-    }
+    
+    setTimeLeft(120);
+    setShowModal(true);
   };
 
   const volunteer = async (e) => {
@@ -69,6 +75,14 @@ const GetInvolved = () => {
       toast({ title: 'Could not submit application', description: res.error, variant: 'destructive' });
     }
   };
+
+  // --- नवीन: अंतिम रक्कम आणि UPI लिंक तयार करणे ---
+  const finalDonationAmount = custom ? parseInt(custom || '0', 10) : amount;
+  
+  // संस्थेचा खरा UPI ID 
+  const upiId = "9552958464m@pnb"; 
+  const payeeName = "BEPCoR";
+  const upiLink = `upi://pay?pa=${upiId}&pn=${payeeName}&am=${finalDonationAmount}&cu=INR`;
 
   return (
     <div>
@@ -103,7 +117,7 @@ const GetInvolved = () => {
               <TabsTrigger value="partner" className="rounded-full data-[state=active]:bg-[#2d5a3d] data-[state=active]:text-white text-[#1c2a1e] h-full">Partner</TabsTrigger>
             </TabsList>
 
-            {/* DONATE */}
+            {/* DONATE TAB */}
             <TabsContent value="donate">
               <div className="grid lg:grid-cols-2 gap-10 items-start reveal">
                 <div>
@@ -123,7 +137,7 @@ const GetInvolved = () => {
                   </div>
                 </div>
 
-                <form onSubmit={donate} className="bg-white border border-[#eee6d3] rounded-3xl p-8 md:p-10">
+                <form onSubmit={donate} className="bg-white border border-[#eee6d3] rounded-3xl p-8 md:p-10 relative">
                   <h3 className="font-display text-2xl text-[#1c2a1e] mb-6">Your details</h3>
                   <div className="space-y-4">
                     <div>
@@ -148,13 +162,13 @@ const GetInvolved = () => {
                     <div>BEPCoR is a Registered Section 8 Company. Receipt within 7 working days.</div>
                   </div>
                   <Button type="submit" disabled={donorBusy} className="w-full h-14 mt-6 rounded-full bg-[#2d5a3d] hover:bg-[#234a31] text-white text-base font-semibold disabled:opacity-70">
-                    {donorBusy ? <Loader2 className="w-4 h-4 animate-spin" /> : <>Donate ₹{(custom ? parseInt(custom || '0', 10) : amount).toLocaleString()} <ArrowRight className="ml-1 w-4 h-4" /></>}
+                    Donate ₹{finalDonationAmount.toLocaleString()} <ArrowRight className="ml-1 w-4 h-4" />
                   </Button>
                 </form>
               </div>
             </TabsContent>
 
-            {/* VOLUNTEER */}
+            {/* VOLUNTEER TAB */}
             <TabsContent value="volunteer">
               <div className="grid lg:grid-cols-2 gap-10 items-start reveal">
                 <div>
@@ -198,7 +212,7 @@ const GetInvolved = () => {
               </div>
             </TabsContent>
 
-            {/* PARTNER */}
+            {/* PARTNER TAB */}
             <TabsContent value="partner">
               <div className="grid lg:grid-cols-2 gap-10 items-center reveal">
                 <img src="https://images.pexels.com/photos/2260933/pexels-photo-2260933.jpeg" alt="Partnership" className="w-full h-[480px] object-cover rounded-3xl" />
@@ -225,6 +239,53 @@ const GetInvolved = () => {
           </Tabs>
         </div>
       </section>
+
+      {/* --- अपडेटेड पॉपअप (Dynamic QR Code) --- */}
+      {showModal && (
+        <div className="fixed inset-0 bg-black/75 flex justify-center items-center z-50 p-4">
+          <div className="bg-white p-8 rounded-[24px] w-full max-w-[420px] text-center relative border-t-[6px] border-[#2d5a3d] shadow-2xl">
+            
+            <button 
+              onClick={() => setShowModal(false)} 
+              className="absolute top-4 right-5 text-gray-400 hover:text-[#1c2a1e] text-3xl font-light"
+            >
+              &times;
+            </button>
+            
+            <h3 className="font-display text-2xl text-[#1c2a1e] mb-2">Complete Donation</h3>
+            <p className="text-sm text-[#4a5a4c] mb-6">Scan the QR code to send ₹{finalDonationAmount.toLocaleString()}</p>
+            
+            {/* --- नवीन: डायनॅमिक QR कोड जो आपोआप तयार होईल --- */}
+            <div className="bg-white border-2 border-dashed border-[#eee6d3] p-4 rounded-2xl w-52 h-52 mx-auto flex items-center justify-center mb-6">
+              <QRCodeSVG 
+                value={upiLink} 
+                size={180} 
+                bgColor={"#ffffff"}
+                fgColor={"#1c2a1e"}
+                level={"M"}
+              />
+            </div>
+
+            <div className="text-left bg-[#f4ecd1] p-5 rounded-2xl text-sm text-[#4a5a4c] mb-6 space-y-1">
+              <div className="font-semibold text-[#1c2a1e] mb-2 text-base">Bank Transfer Details</div>
+              <div><strong className="font-medium">Name:</strong> BE-ECOLITERACY POLLINATOR CONSERVATION AND RESEARCH FOUNDATION (BEPCOR)</div>
+              <div><strong className="font-medium">Bank:</strong> Punjab National Bank (PNB) </div>
+              <div><strong className="font-medium">A/C No:</strong> 9986002100002092</div>
+              <div><strong className="font-medium">IFSC:</strong> PUNB0998600</div>
+            </div>
+
+            <div className="bg-[#fcfaf5] p-3 rounded-xl border border-[#eee6d3]">
+              <p className="text-[#1c2a1e] font-medium text-sm">
+                Window closes in <span className="text-[#d9381e] font-bold text-lg ml-1">
+                  {Math.floor(timeLeft / 60)}:{String(timeLeft % 60).padStart(2, '0')}
+                </span>
+              </p>
+            </div>
+
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };

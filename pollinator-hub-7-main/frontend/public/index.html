@@ -61,6 +61,11 @@
         display: inline-block;
         margin: 0 20px 0 0;
         font-size: 14px;
+        vertical-align: middle;
+      }
+      .cookie-btn-container {
+        display: inline-block;
+        vertical-align: middle;
       }
       #cookie-accept-btn {
         background-color: #d4a33c; /* BEPCoR Gold */
@@ -72,31 +77,57 @@
         font-size: 14px;
         cursor: pointer;
         transition: background-color 0.3s;
+        vertical-align: middle;
       }
       #cookie-accept-btn:hover {
         background-color: #c09330;
       }
+      #cookie-close-btn {
+        background: none;
+        border: none;
+        color: #e8e0c8;
+        font-size: 26px;
+        font-weight: bold;
+        cursor: pointer;
+        margin-left: 15px;
+        vertical-align: middle;
+        transition: color 0.3s;
+        line-height: 1;
+      }
+      #cookie-close-btn:hover {
+        color: #d4a33c; /* माऊस नेल्यावर सोनेरी रंग होईल */
+      }
       @media (max-width: 768px) {
         #cookie-banner p { display: block; margin: 0 0 12px 0; line-height: 1.5; }
+        .cookie-btn-container { display: block; margin-top: 10px; }
       }
     </style>
     
     <div id="cookie-banner">
       <p>We use cookies to improve your experience and analyze website traffic. By continuing to use this site, you consent to our use of cookies.</p>
-      <button id="cookie-accept-btn">Accept Cookies</button>
+      <div class="cookie-btn-container">
+        <button id="cookie-accept-btn">Accept Cookies</button>
+        <button id="cookie-close-btn" aria-label="Close" title="Close">&times;</button>
+      </div>
     </div>
     
     <script>
       document.addEventListener("DOMContentLoaded", function() {
-        // जर युजरने आधी Accept केले नसेल, तर बॅनर दाखवा
-        if (!localStorage.getItem("bepcorCookiesAccepted")) {
+        // जर युजरने आधी Accept किंवा Close काहीच केले नसेल, तर बॅनर दाखवा
+        if (!localStorage.getItem("bepcorCookieChoice")) {
           document.getElementById("cookie-banner").style.display = "block";
         }
         
-        // Accept बटनावर क्लिक केल्यावर काय होईल
+        // Accept बटनावर क्लिक केल्यावर
         document.getElementById("cookie-accept-btn").addEventListener("click", function() {
-          localStorage.setItem("bepcorCookiesAccepted", "true"); // ब्राउझरमध्ये सेव्ह करा
-          document.getElementById("cookie-banner").style.display = "none"; // बॅनर लपवा
+          localStorage.setItem("bepcorCookieChoice", "accepted"); 
+          document.getElementById("cookie-banner").style.display = "none"; 
+        });
+
+        // 'X' (Close) चिन्हावर क्लिक केल्यावर
+        document.getElementById("cookie-close-btn").addEventListener("click", function() {
+          localStorage.setItem("bepcorCookieChoice", "dismissed"); // नोंद ठेवा की त्यांनी बॅनर बंद केला
+          document.getElementById("cookie-banner").style.display = "none"; 
         });
       });
     </script>
