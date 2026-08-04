@@ -56,7 +56,7 @@ const Header = () => {
 
           <div className="hidden xl:block">
             <Link to="/get-involved">
-              <Button className="bg-[#2d5a3d] hover:bg-[#234a31] text-white rounded-full px-6 h-11 font-medium">Donate</Button>
+              <Button className="bg-[#2d5a3d] hover:bg-[#234a31] text-white rounded-full px-6 h-11 font-medium">Join the Cause</Button>
             </Link>
           </div>
 
@@ -77,7 +77,7 @@ const Header = () => {
             </NavLink>
           ))}
           <Link to="/get-involved" className="mt-2">
-            <Button className="w-full bg-[#2d5a3d] hover:bg-[#234a31] text-white rounded-full h-12">Donate</Button>
+            <Button className="w-full bg-[#2d5a3d] hover:bg-[#234a31] text-white rounded-full h-12">Join the Cause</Button>
           </Link>
         </div>
       </div>
