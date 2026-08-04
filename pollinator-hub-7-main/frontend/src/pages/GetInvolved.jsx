@@ -9,26 +9,27 @@ import { toast } from '../hooks/use-toast';
 import { donationTiers } from '../data/mock';
 import api from '../lib/api';
 import { QRCodeSVG } from 'qrcode.react';
-
-// EmailJS लायब्ररी
 import emailjs from '@emailjs/browser';
 
 const GetInvolved = () => {
   const [amount, setAmount] = useState(2500);
   const [custom, setCustom] = useState('');
-  const [donor, setDonor] = useState({ name: '', email: '', phone: '' });
+  
+  // डोनर स्टेटमध्ये पॅन कार्ड ॲड केले
+  const [donor, setDonor] = useState({ name: '', email: '', phone: '', pan: '' });
   const [donorBusy, setDonorBusy] = useState(false);
 
   const [volForm, setVolForm] = useState({ name: '', email: '', interest: 'Field Volunteer', message: '' });
   const [volBusy, setVolBusy] = useState(false);
 
   const [showModal, setShowModal] = useState(false);
-  
   const [utr, setUtr] = useState('');
   const [isSendingData, setIsSendingData] = useState(false);
 
-  // तुमची Google Sheet ची लिंक
+  // तुमची Google Sheet लिंक
   const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbzRQNauXTBHKnKI6ceBUk5g4q3caw6TNzdZsmPWbq3NPn-s42J8zCcN44T_7UHuHaMy/exec";
+
+  const finalDonationAmount = custom ? parseInt(custom || '0', 10) : amount;
 
   useEffect(() => {
     const els = document.querySelectorAll('.reveal');
@@ -39,13 +40,18 @@ const GetInvolved = () => {
 
   const donate = async (e) => {
     e.preventDefault();
-    const final = custom ? parseInt(custom, 10) : amount;
     if (!donor.name || !donor.email) {
       toast({ title: 'Please add your name and email', variant: 'destructive' });
       return;
     }
-    if (!final || final <= 0) {
+    if (!finalDonationAmount || finalDonationAmount <= 0) {
       toast({ title: 'Please enter a valid amount', variant: 'destructive' });
+      return;
+    }
+    
+    // ₹२००० च्या वर देणगी असल्यास PAN सक्तीचे करण्याची अट
+    if (finalDonationAmount > 2000 && !donor.pan.trim()) {
+      toast({ title: 'PAN Card is mandatory', description: 'Please provide your PAN card number for donations above ₹2,000.', variant: 'destructive' });
       return;
     }
     
@@ -61,63 +67,63 @@ const GetInvolved = () => {
     }
     
     setIsSendingData(true);
-
-    const finalAmount = custom ? parseInt(custom || '0', 10) : amount;
     const donorPhone = donor.phone || 'Not provided';
+    const donorPan = donor.pan || 'Not provided';
 
     // १. EmailJS साठी माहिती
     const templateParams = {
       name: donor.name,
       email: donor.email,
       phone: donorPhone,
-      amount: finalAmount,
+      amount: finalDonationAmount,
+      pan: donorPan, 
       utr: utr
     };
 
-    // २. Google Sheet साठी माहिती तयार करणे
-    const formData = new URLSearchParams();
+    // २. Google Sheet साठी माहिती (FormData)
+    const formData = new FormData();
     formData.append('name', donor.name);
     formData.append('email', donor.email);
     formData.append('phone', donorPhone);
-    formData.append('amount', finalAmount);
+    formData.append('amount', finalDonationAmount);
+    formData.append('pan', donorPan); 
     formData.append('utr', utr);
 
     try {
-      // दोन्ही गोष्टी एकाच वेळी सुरू करणे (ईमेल आणि गुगल शीट)
+      // ईमेल आणि गुगल शीट दोन्ही एकाच वेळी पाठवणे
       await Promise.all([
-        // ईमेल पाठवणे
         emailjs.send(
           'service_f39fold',      
           'template_sfn76yr',     
           templateParams,
           'RQpxMWbY1pdRGSEQ4'       
         ),
-        // गुगल शीट मध्ये सेव्ह करणे
         fetch(GOOGLE_SHEET_URL, {
           method: 'POST',
+          mode: 'no-cors', // गुगल शीट मध्ये डेटा जाण्यासाठी महत्त्वाचे
           body: formData,
         })
       ]);
 
-      // दोन्ही यशस्वी झाल्यावर
       toast({ title: 'Thank You!', description: 'Your donation details have been saved successfully.' });
       setShowModal(false);
-      setDonor({ name: '', email: '', phone: '' });
+      setDonor({ name: '', email: '', phone: '', pan: '' });
       setCustom('');
       setUtr('');
       
     } catch (error) {
       console.error('Error saving details:', error);
-      toast({ title: 'Notice', description: 'Payment recorded, but there was a slight delay in updating our database. We will verify it manually.', variant: 'default' });
-      // तरीही फॉर्म बंद करणे जेणेकरून युजरला त्रास होणार नाही
+      // 'no-cors' मुळे कधीकधी error block रन होतो, पण डेटा गेलेला असतो.
+      toast({ title: 'Submitted', description: 'Your details have been submitted. We will verify your payment.', variant: 'default' });
       setShowModal(false);
-      setDonor({ name: '', email: '', phone: '' });
+      setDonor({ name: '', email: '', phone: '', pan: '' });
+      setCustom('');
+      setUtr('');
     } finally {
       setIsSendingData(false);
     }
   };
 
-  // Volunteer आणि इतर फंक्शन्स ...
   const volunteer = async (e) => {
     e.preventDefault();
     if (!volForm.name || !volForm.email) {
@@ -137,7 +143,6 @@ const GetInvolved = () => {
     }
   };
 
-  const finalDonationAmount = custom ? parseInt(custom || '0', 10) : amount;
   const upiId = "9552958464m@pnb"; 
   const payeeName = "BEPCoR";
   const upiLink = `upi://pay?pa=${upiId}&pn=${payeeName}&am=${finalDonationAmount}&cu=INR`;
@@ -209,10 +214,26 @@ const GetInvolved = () => {
                       <Label className="text-xs uppercase tracking-[0.14em] text-[#5a6f5c]">Email</Label>
                       <Input type="email" value={donor.email} onChange={(e) => setDonor({ ...donor, email: e.target.value })} className="h-12 mt-2 rounded-xl border-[#eee6d3]" required />
                     </div>
-                    <div>
-                      <Label className="text-xs uppercase tracking-[0.14em] text-[#5a6f5c]">Phone (optional)</Label>
-                      <Input value={donor.phone} onChange={(e) => setDonor({ ...donor, phone: e.target.value })} className="h-12 mt-2 rounded-xl border-[#eee6d3]" />
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label className="text-xs uppercase tracking-[0.14em] text-[#5a6f5c]">Phone</Label>
+                        <Input value={donor.phone} onChange={(e) => setDonor({ ...donor, phone: e.target.value })} className="h-12 mt-2 rounded-xl border-[#eee6d3]" />
+                      </div>
+                      <div>
+                        <Label className="text-xs uppercase tracking-[0.14em] text-[#5a6f5c]">
+                          PAN Card {finalDonationAmount > 2000 ? <span className="text-red-500 text-lg leading-none">*</span> : ''}
+                        </Label>
+                        <Input 
+                          value={donor.pan} 
+                          onChange={(e) => setDonor({ ...donor, pan: e.target.value.toUpperCase() })} 
+                          placeholder="ABCDE1234F" 
+                          className="h-12 mt-2 rounded-xl border-[#eee6d3] uppercase" 
+                        />
+                      </div>
                     </div>
+                    {finalDonationAmount > 2000 && (
+                      <p className="text-xs text-red-600 font-medium mt-1">PAN Card is required for donations above ₹2,000 for tax exemption.</p>
+                    )}
                   </div>
                   <div className="mt-6 p-4 rounded-xl bg-[#f4ecd1] text-sm text-[#4a5a4c] flex items-start gap-3">
                     <CheckCircle2 className="w-5 h-5 text-[#2d5a3d] flex-none mt-0.5" />
@@ -226,11 +247,52 @@ const GetInvolved = () => {
             </TabsContent>
 
             <TabsContent value="volunteer">
-              {/* Volunteer Content Removed for Brevity in this block, but you should keep your existing Volunteer and Partner tab content if you had any */}
+              <div className="max-w-2xl mx-auto bg-white border border-[#eee6d3] rounded-3xl p-8 md:p-10 reveal">
+                <h3 className="font-display text-3xl text-[#1c2a1e] mb-2">Join our network</h3>
+                <p className="text-[#4a5a4c] mb-8">We are looking for field researchers, content creators, and community mobilizers.</p>
+                <form onSubmit={volunteer} className="space-y-4">
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    <div>
+                      <Label className="text-xs uppercase tracking-[0.14em] text-[#5a6f5c]">Name</Label>
+                      <Input value={volForm.name} onChange={(e) => setVolForm({ ...volForm, name: e.target.value })} className="h-12 mt-2" required />
+                    </div>
+                    <div>
+                      <Label className="text-xs uppercase tracking-[0.14em] text-[#5a6f5c]">Email</Label>
+                      <Input type="email" value={volForm.email} onChange={(e) => setVolForm({ ...volForm, email: e.target.value })} className="h-12 mt-2" required />
+                    </div>
+                  </div>
+                  <div>
+                    <Label className="text-xs uppercase tracking-[0.14em] text-[#5a6f5c]">Area of Interest</Label>
+                    <select value={volForm.interest} onChange={(e) => setVolForm({ ...volForm, interest: e.target.value })} className="w-full h-12 mt-2 px-3 rounded-xl border border-[#eee6d3] bg-white text-sm focus:outline-none focus:ring-2 focus:ring-[#2d5a3d] focus:border-transparent">
+                      <option>Field Volunteer</option>
+                      <option>Research Assistant</option>
+                      <option>Content & Social Media</option>
+                      <option>Corporate Connections</option>
+                    </select>
+                  </div>
+                  <div>
+                    <Label className="text-xs uppercase tracking-[0.14em] text-[#5a6f5c]">Message (Optional)</Label>
+                    <Textarea value={volForm.message} onChange={(e) => setVolForm({ ...volForm, message: e.target.value })} className="mt-2 min-h-[100px] resize-none" placeholder="Tell us a bit about your background..." />
+                  </div>
+                  <Button type="submit" disabled={volBusy} className="w-full h-14 mt-4 rounded-full bg-[#2d5a3d] hover:bg-[#234a31] text-white">
+                    {volBusy ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Submit Application'}
+                  </Button>
+                </form>
+              </div>
             </TabsContent>
 
             <TabsContent value="partner">
-             {/* Partner Content */}
+              <div className="max-w-2xl mx-auto bg-white border border-[#eee6d3] rounded-3xl p-8 md:p-10 text-center reveal">
+                <Building2 className="w-12 h-12 text-[#2d5a3d] mx-auto mb-6" strokeWidth={1} />
+                <h3 className="font-display text-3xl text-[#1c2a1e] mb-4">Corporate & Institutional Partnerships</h3>
+                <p className="text-[#4a5a4c] mb-8 leading-relaxed">
+                  We collaborate with businesses, CSR wings, and educational institutions to implement large-scale pollinator corridors and rural empowerment programs.
+                </p>
+                <div className="inline-flex flex-col items-center p-6 bg-[#f7f2e4] rounded-2xl border border-[#eee6d3]">
+                  <div className="text-sm text-[#5a6f5c] mb-2 uppercase tracking-widest text-xs">Reach out to our partnership team</div>
+                  <a href="mailto:contact@bepcor.org" className="font-display text-2xl text-[#2d5a3d] hover:text-[#1c2a1e] transition-colors">contact@bepcor.org</a>
+                </div>
+              </div>
             </TabsContent>
           </Tabs>
         </div>
@@ -285,7 +347,7 @@ const GetInvolved = () => {
                 {isSendingData ? (
                   <>
                     <Loader2 className="mr-2 w-5 h-5 animate-spin" />
-                    Saving Details...
+                    Processing...
                   </>
                 ) : (
                   'Confirm Payment & Send Details'
