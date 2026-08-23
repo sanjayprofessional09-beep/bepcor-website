@@ -5,7 +5,7 @@ import { Input } from './ui/input';
 import { Button } from './ui/button';
 import { toast } from '../hooks/use-toast';
 import { siteInfo, BRAND_LOGO } from '../data/mock';
-import api from '../lib/api'; // तुमचा जुना API import तसाच ठेवला आहे
+import api from '../lib/api'; 
 
 const Footer = () => {
   const [email, setEmail] = useState('');
@@ -105,6 +105,7 @@ const Footer = () => {
             <ul className="space-y-3 text-sm">
               <li><Link to="/about" className="link-underline hover:text-white">About Us</Link></li>
               <li><Link to="/programs" className="link-underline hover:text-white">Programs</Link></li>
+              <li><Link to="/blog" className="link-underline hover:text-white">Blog</Link></li> {/* <-- इथे आपण Blog ॲड केला आहे */}
               <li><Link to="/resources" className="link-underline hover:text-white">Field Journal</Link></li>
               <li><Link to="/get-involved" className="link-underline hover:text-white">Volunteer</Link></li>
               <li><Link to="/get-involved" className="link-underline hover:text-white">Donate</Link></li>

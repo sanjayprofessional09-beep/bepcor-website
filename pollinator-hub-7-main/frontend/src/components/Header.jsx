@@ -11,6 +11,7 @@ const navItems = [
   { label: 'Programs', to: '/programs' },
   { label: 'Get Involved', to: '/get-involved' },
   { label: 'Resources', to: '/resources' },
+  { label: 'Blog', to: '/blog' }, // <-- इथे आपण Blog ॲड केला आहे
   { label: 'Contact', to: '/contact' },
 ];
 
@@ -56,6 +57,7 @@ const Header = () => {
 
           <div className="hidden xl:block">
             <Link to="/get-involved">
+              {/* इथे आपण Join the Cause केले आहे */}
               <Button className="bg-[#2d5a3d] hover:bg-[#234a31] text-white rounded-full px-6 h-11 font-medium">Join the Cause</Button>
             </Link>
           </div>
