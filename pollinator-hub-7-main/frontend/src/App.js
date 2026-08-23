@@ -11,6 +11,8 @@ import GetInvolved from './pages/GetInvolved';
 import Resources from './pages/Resources';
 import Contact from './pages/Contact';
 import { Toaster } from './components/ui/toaster';
+import Blog from './pages/Blog';
+import BlogPost from './pages/BlogPost';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -34,6 +36,8 @@ function App() {
             <Route path="/resources" element={<Resources />} />
             <Route path="/resources/:slug" element={<Resources />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/blog/:id" element={<BlogPost />} />
             <Route path="*" element={<h1>404 - Page Not Found</h1>} />
           </Routes>
         </main>
