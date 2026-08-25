@@ -6,15 +6,16 @@ const Blog = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // तुमची नवीन Google Sheet ची लिंक इथे टाका
-  const GOOGLE_SHEET_URL = "तुमची_नवीन_लिंक_इथे_पेस्ट_करा";
+  // तुमची नवीन Google Sheet ची लिंक या दोन अवतरण चिन्हांच्या मध्ये टाका
+  const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbyF2p-ozMkvgYmglru9-s5-zN0NE2yMVBNcrUDj_YE51R29p-PU4btQFnpAXrnipDHhbw/exec";
 
   useEffect(() => {
     window.scrollTo(0, 0);
     
-    // गुगल शीट मधून डेटा आणणे (सुधारित पद्धत)
+    // गुगल शीट मधून डेटा आणणे (credentials: 'omit' सोबत)
     fetch(GOOGLE_SHEET_URL, {
-      redirect: 'follow'
+      redirect: 'follow',
+      credentials: 'omit'
     })
       .then(res => res.json())
       .then(data => {
