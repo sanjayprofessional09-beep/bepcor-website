@@ -6,16 +6,18 @@ const Blog = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // तुमची Google Sheet ची लिंक
-  const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbz_cmAd2C2ZNYBf86Zx_G-F7KLQwfNBKwKszroTVsqQKZBMpdIZ9fRMSEYwf4emELJZ4A/exec";
+  // तुमची नवीन Google Sheet ची लिंक इथे टाका
+  const GOOGLE_SHEET_URL = "तुमची_नवीन_लिंक_इथे_पेस्ट_करा";
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    // गुगल शीट मधून डेटा आणणे
-    fetch(GOOGLE_SHEET_URL)
+    
+    // गुगल शीट मधून डेटा आणणे (सुधारित पद्धत)
+    fetch(GOOGLE_SHEET_URL, {
+      redirect: 'follow'
+    })
       .then(res => res.json())
       .then(data => {
-        // डेटा उलट करणे जेणेकरून नवीन ब्लॉग सर्वात वर दिसेल
         setPosts(data.reverse());
         setLoading(false);
       })
@@ -48,7 +50,6 @@ const Blog = () => {
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {posts.map((post, index) => (
-              // लिंकमध्ये आपण त्या ब्लॉगचा सर्व डेटा पुढच्या पेजला पाठवत आहोत
               <Link 
                 to={`/blog/${index}`} 
                 state={{ post }} 
@@ -69,7 +70,7 @@ const Blog = () => {
                 </div>
                 <div className="p-6 flex flex-col flex-grow">
                   <div className="flex items-center gap-4 text-xs text-[#5a6f5c] mb-3">
-                    <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5" /> {post.date}</span>
+                    <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5" /> {post.date ? new Date(post.date).toLocaleDateString() : ''}</span>
                     <span className="flex items-center gap-1"><User className="w-3.5 h-3.5" /> {post.author}</span>
                   </div>
                   <h3 className="font-display text-2xl text-[#1c2a1e] mb-3 leading-tight group-hover:text-[#2d5a3d] transition-colors">
