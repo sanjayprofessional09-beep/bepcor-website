@@ -123,7 +123,12 @@ const Blog = () => {
                       <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5" /> {formatDate(post.date)}</span>
                       <span className="flex items-center gap-1"><User className="w-3.5 h-3.5" /> {post.author}</span>
                     </div>
-                    <h3 className="font-display text-2xl text-[#1c2a1e] mb-3 group-hover:text-[#2d5a3d]">{post.title}</h3>
+                    
+                    {/* येथे आपण मराठी आणि इंग्रजी हेडलाईनसाठी वेगळा क्लास लावण्याची अट टाकली आहे */}
+                    <h3 className={`text-2xl text-[#1c2a1e] mb-3 group-hover:text-[#2d5a3d] ${post.language && post.language.toLowerCase().trim() !== 'english' ? 'font-marathi-title' : 'font-display'}`}>
+                      {post.title}
+                    </h3>
+                    
                     <p className="text-[#4a5a4c] text-sm mb-6 line-clamp-3 flex-grow">{post.excerpt}</p>
                     <div className="text-[#2d5a3d] font-semibold flex items-center gap-2 mt-auto">Read More <ArrowRight className="w-4 h-4" /></div>
                   </div>

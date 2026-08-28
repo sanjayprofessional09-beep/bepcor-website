@@ -1,17 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Calendar, User } from 'lucide-react';
+import { ArrowLeft, Calendar, User, Share2, Facebook, MessageCircle, Link2, Linkedin } from 'lucide-react';
 
 const BlogPost = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const post = location.state?.post;
   
-  // नवीन ब्लॉग्स आणण्यासाठी स्टेट
   const [recentPosts, setRecentPosts] = useState([]);
   
   // तुमची Google Sheet ची लिंक इथे टाका
-  const GOOGLE_SHEET_URL = "तुमची_नवीन_लिंक_इथे_पेस्ट_करा";
+  const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbyF2p-ozMkvgYmglru9-s5-zN0NE2yMVBNcrUDj_YE51R29p-PU4btQFnpAXrnipDHhbw/exec";
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -20,12 +19,10 @@ const BlogPost = () => {
       return;
     }
 
-    // साईडबारसाठी नवीन ब्लॉग्स आणणे
     fetch(GOOGLE_SHEET_URL, { redirect: 'follow', credentials: 'omit' })
       .then(res => res.json())
       .then(data => {
         const reversed = data.reverse();
-        // जो ब्लॉग आपण वाचत आहोत तो वगळून, बाकीचे ३ नवीन ब्लॉग साईडबारमध्ये दाखवणे
         const filtered = reversed.filter(p => p.title !== post.title).slice(0, 3);
         setRecentPosts(filtered);
       })
@@ -34,7 +31,9 @@ const BlogPost = () => {
 
   if (!post) return null;
 
-  // मजकूर आणि फोटो डिझाईन
+  // ब्लॉगची भाषा मराठी आहे की इंग्रजी हे ओळखण्यासाठी अट
+  const isMarathi = post.language && post.language.toLowerCase().trim() !== 'english';
+
   const renderContent = (text) => {
     if (!text) return null;
     return text.split('\n').map((paragraph, pIndex) => {
@@ -68,10 +67,9 @@ const BlogPost = () => {
           <ArrowLeft className="w-5 h-5" /> Back to Blogs
         </Link>
 
-        {/* 2-Column Grid Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           
-          {/* डावी बाजू: मुख्य ब्लॉग (२ कॉलमची जागा घेईल) */}
+          {/* डावी बाजू: मुख्य ब्लॉग */}
           <div className="lg:col-span-2 bg-white rounded-3xl overflow-hidden border border-[#eee6d3] shadow-lg">
             <div className="h-[400px] w-full bg-[#f4ecd1]">
               <img 
@@ -86,12 +84,70 @@ const BlogPost = () => {
                 <span className="flex items-center gap-2"><User className="w-4 h-4" /> {post.author}</span>
                 {post.category && <span className="bg-[#f4ecd1] text-[#2d5a3d] px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">{post.category}</span>}
               </div>
-              <h1 className="font-display text-4xl text-[#1c2a1e] mb-10 leading-tight">{post.title}</h1>
+              
+              <h1 className={`text-4xl text-[#1c2a1e] mb-10 leading-tight ${isMarathi ? 'font-marathi-title' : 'font-display'}`}>
+                {post.title}
+              </h1>
+              
               <div className="prose max-w-none">{renderContent(post.content)}</div>
+
+              {/* --- शेअरिंग सेक्शन --- */}
+              <div className="mt-10 pt-6 border-t border-[#eee6d3]">
+                <h4 className="text-lg font-bold text-[#1c2a1e] mb-4 flex items-center gap-2">
+                  <Share2 className="w-5 h-5 text-[#2d5a3d]" /> 
+                  {isMarathi ? 'हा लेख शेअर करा' : 'Share this article'}
+                </h4>
+                
+                <div className="flex flex-wrap gap-3">
+                  {/* WhatsApp Share */}
+                  <a 
+                    href={`https://wa.me/?text=${encodeURIComponent(post.title + " - " + window.location.href)}`} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 px-4 py-2 text-sm bg-[#25D366] text-white rounded-full hover:bg-[#1ebd59] transition-all font-medium shadow-sm"
+                  >
+                    <MessageCircle className="w-4 h-4" /> WhatsApp
+                  </a>
+
+                  {/* Facebook Share */}
+                  <a 
+                    href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 px-4 py-2 text-sm bg-[#1877F2] text-white rounded-full hover:bg-[#166fe5] transition-all font-medium shadow-sm"
+                  >
+                    <Facebook className="w-4 h-4" /> Facebook
+                  </a>
+
+                  {/* LinkedIn Share */}
+                  <a 
+                    href={`https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(window.location.href)}&title=${encodeURIComponent(post.title)}`} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 px-4 py-2 text-sm bg-[#0A66C2] text-white rounded-full hover:bg-[#084e96] transition-all font-medium shadow-sm"
+                  >
+                    <Linkedin className="w-4 h-4" /> LinkedIn
+                  </a>
+
+                  {/* Copy Link Button */}
+                  <button 
+                    onClick={() => {
+                      navigator.clipboard.writeText(window.location.href);
+                      alert(isMarathi ? 'लिंक कॉपी केली!' : 'Link Copied!');
+                    }}
+                    className="flex items-center gap-2 px-4 py-2 text-sm bg-white border border-[#eee6d3] text-[#1c2a1e] rounded-full hover:bg-[#f4ecd1] transition-all font-medium shadow-sm"
+                  >
+                    <Link2 className="w-4 h-4 text-[#2d5a3d]" /> 
+                    {isMarathi ? 'लिंक कॉपी करा' : 'Copy Link'}
+                  </button>
+                </div>
+              </div>
+              {/* --- शेअरिंग सेक्शन समाप्त --- */}
+
             </div>
           </div>
 
-          {/* उजवी बाजू: Sidebar - New On The Blog (१ कॉलमची जागा घेईल) */}
+          {/* उजवी बाजू: Sidebar */}
           <div className="lg:col-span-1">
             <div className="sticky top-28 bg-white p-6 rounded-3xl border border-[#eee6d3] shadow-sm">
               <h3 className="font-display text-2xl text-[#1c2a1e] mb-6 border-b border-[#eee6d3] pb-4">

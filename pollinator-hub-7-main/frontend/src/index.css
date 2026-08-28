@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700;9..144,800&family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700;9..144,800&family=Inter:wght@300;400;500;600;700&family=Mukta:wght@400;500;600;700&family=Noto+Sans+Kannada:wght@400;500;600;700&family=Tiro+Devanagari+Marathi&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,9 +6,20 @@
 
 body {
   margin: 0;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: 'Mukta', 'Noto Sans Kannada', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* १. बाय डिफॉल्ट सर्व हेडलाईन्ससाठी इंग्रजी 'Fraunces' फॉन्ट राहील */
+h1, h2, h3, h4, h5, h6, .font-display {
+  font-family: 'Fraunces', serif;
+}
+
+/* २. मराठी हेडलाईनसाठी खास 'Tiro Devanagari Marathi' फॉन्ट (पुस्तकासारखा आणि बोल्ड) */
+.font-marathi-title {
+  font-family: 'Tiro Devanagari Marathi', serif !important;
+  font-weight: 700 !important;
 }
 
 code {
