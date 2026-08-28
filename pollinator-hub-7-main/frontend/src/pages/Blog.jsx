@@ -1,16 +1,27 @@
 import React, { useEffect, useState } from 'react';
-import { ArrowRight, Calendar, User, Loader2, ChevronLeft, ChevronRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { ArrowRight, Calendar, User, Loader2, ChevronLeft, ChevronRight, Globe2 } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
 
 const Blog = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
-  
-  // पेज बदलण्यासाठी नवीन सिस्टीम
   const [currentPage, setCurrentPage] = useState(1);
-  const postsPerPage = 6; // एका पेजवर किती ब्लॉग दाखवायचे तो आकडा
+  const postsPerPage = 6; 
+  
+  // Header मधून आलेली भाषा ओळखण्यासाठी नवीन बदल
+  const location = useLocation();
+  const [activeLanguage, setActiveLanguage] = useState(location.state?.lang || 'English');
 
+  // तुमची Google Sheet ची लिंक
   const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbyF2p-ozMkvgYmglru9-s5-zN0NE2yMVBNcrUDj_YE51R29p-PU4btQFnpAXrnipDHhbw/exec";
+
+  // जर युझरने Header मधून भाषा बदलली, तर पेजवर ती भाषा लगेच बदलण्यासाठी
+  useEffect(() => {
+    if (location.state?.lang) {
+      setActiveLanguage(location.state.lang);
+      setCurrentPage(1);
+    }
+  }, [location.state?.lang]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -32,15 +43,27 @@ const Blog = () => {
     return isNaN(date.getTime()) ? dateString : date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
   };
 
-  // पेजचे गणित
+  const filteredPosts = posts.filter(post => {
+    if (activeLanguage === 'English') {
+      return !post.language || post.language.toLowerCase().trim() === 'english';
+    } else {
+      return post.language && post.language.toLowerCase().trim() !== 'english';
+    }
+  });
+
   const indexOfLastPost = currentPage * postsPerPage;
   const indexOfFirstPost = indexOfLastPost - postsPerPage;
-  const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
-  const totalPages = Math.ceil(posts.length / postsPerPage);
+  const currentPosts = filteredPosts.slice(indexOfFirstPost, indexOfLastPost);
+  const totalPages = Math.ceil(filteredPosts.length / postsPerPage);
 
   const paginate = (pageNumber) => {
     setCurrentPage(pageNumber);
     window.scrollTo({ top: 400, behavior: 'smooth' });
+  };
+
+  const handleLanguageChange = (lang) => {
+    setActiveLanguage(lang);
+    setCurrentPage(1);
   };
 
   return (
@@ -48,9 +71,26 @@ const Blog = () => {
       <section className="py-16 bg-[#f7f2e4] border-b border-[#eee6d3] mb-12">
         <div className="max-w-6xl mx-auto px-5 md:px-8 text-center">
           <h1 className="font-display text-4xl md:text-6xl text-[#1c2a1e] mb-6">Our Latest Stories</h1>
-          <p className="text-lg text-[#4a5a4c] max-w-2xl mx-auto">
+          <p className="text-lg text-[#4a5a4c] max-w-2xl mx-auto mb-8">
             Insights, field updates, and inspiring stories from our mission to conserve native pollinators.
           </p>
+          
+          <div className="flex justify-center items-center gap-4 mt-8">
+            <div className="bg-white p-1.5 rounded-full border border-[#eee6d3] shadow-sm inline-flex">
+              <button 
+                onClick={() => handleLanguageChange('English')}
+                className={`flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-bold transition-all ${activeLanguage === 'English' ? 'bg-[#2d5a3d] text-white shadow-md' : 'text-[#5a6f5c] hover:bg-[#f4ecd1]'}`}
+              >
+                <Globe2 className="w-4 h-4" /> English
+              </button>
+              <button 
+                onClick={() => handleLanguageChange('Marathi')}
+                className={`flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-bold transition-all ${activeLanguage === 'Marathi' ? 'bg-[#2d5a3d] text-white shadow-md' : 'text-[#5a6f5c] hover:bg-[#f4ecd1]'}`}
+              >
+                मराठी / ಕನ್ನಡ
+              </button>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -60,6 +100,11 @@ const Blog = () => {
             <Loader2 className="w-10 h-10 animate-spin mb-4" />
             <p className="text-lg font-medium">Loading amazing stories...</p>
           </div>
+        ) : filteredPosts.length === 0 ? (
+          <div className="text-center py-20">
+            <h3 className="text-2xl text-[#1c2a1e] font-display mb-2">Coming Soon!</h3>
+            <p className="text-[#5a6f5c]">We are currently working on articles for this language.</p>
+          </div>
         ) : (
           <>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -67,7 +112,7 @@ const Blog = () => {
                 <Link to={`/blog/${indexOfFirstPost + index}`} state={{ post }} key={index} className="bg-white rounded-2xl overflow-hidden border border-[#eee6d3] hover:shadow-xl transition-shadow group flex flex-col">
                   <div className="h-56 overflow-hidden relative flex-none bg-[#f4ecd1]">
                     <img 
-                      src={post.image && post.image.startsWith('http') ? post.image : 'https://placehold.co/800x600/e8e0c8/1c2a1e?text=BEPCoR+Blog'} 
+                      src={post.image || 'https://placehold.co/800x600/e8e0c8/1c2a1e?text=BEPCoR+Blog'} 
                       onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/800x600/e8e0c8/1c2a1e?text=BEPCoR+Blog'; }}
                       alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
@@ -86,7 +131,6 @@ const Blog = () => {
               ))}
             </div>
 
-            {/* Page Numbers (Pagination) */}
             {totalPages > 1 && (
               <div className="flex justify-center items-center gap-4 mt-16">
                 <button 
