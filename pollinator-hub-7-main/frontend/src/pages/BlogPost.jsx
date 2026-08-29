@@ -1,38 +1,90 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation, Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Calendar, User, Share2, Facebook, MessageCircle, Link2, Linkedin } from 'lucide-react';
+import { useLocation, Link, useNavigate, useParams } from 'react-router-dom';
+import { ArrowLeft, Calendar, User, Share2, Facebook, MessageCircle, Link2, Linkedin, Loader2 } from 'lucide-react';
 
 const BlogPost = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const post = location.state?.post;
+  const { id } = useParams();
   
+  const [post, setPost] = useState(location.state?.post || null);
   const [recentPosts, setRecentPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
   
   // तुमची Google Sheet ची लिंक इथे टाका
   const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbyF2p-ozMkvgYmglru9-s5-zN0NE2yMVBNcrUDj_YE51R29p-PU4btQFnpAXrnipDHhbw/exec";
 
   useEffect(() => {
-    window.scrollTo(0, 0);
-    if (!post) {
-      navigate('/blog');
-      return;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    let currentPost = location.state?.post || null;
+    if (currentPost) {
+      setPost(currentPost);
+    } else {
+      setLoading(true);
     }
 
     fetch(GOOGLE_SHEET_URL, { redirect: 'follow', credentials: 'omit' })
       .then(res => res.json())
       .then(data => {
-        const reversed = data.reverse();
-        const filtered = reversed.filter(p => p.title !== post.title).slice(0, 3);
+        const mappedData = data.map((p, index) => ({ ...p, originalId: index }));
+        const reversed = [...mappedData].reverse();
+        
+        if (!currentPost) {
+          const postIndex = parseInt(id, 10);
+          currentPost = mappedData.find(p => p.originalId === postIndex);
+          
+          if (currentPost) {
+            setPost(currentPost);
+          } else {
+            navigate('/blog');
+            return;
+          }
+        }
+
+        const filtered = reversed.filter(p => p.originalId !== currentPost.originalId).slice(0, 3);
         setRecentPosts(filtered);
+        setLoading(false);
       })
-      .catch(err => console.error(err));
-  }, [post, navigate]);
+      .catch(err => {
+        console.error(err);
+        setLoading(false);
+        if (!currentPost) navigate('/blog');
+      });
+  }, [id, location.key, location.state?.post, navigate]);
+
+  if (loading && !post) {
+    return (
+      <div className="pt-32 pb-20 flex flex-col items-center justify-center min-h-screen bg-[#fcfaf5]">
+        <Loader2 className="w-10 h-10 animate-spin text-[#2d5a3d] mb-4" />
+        <p className="text-[#5a6f5c] font-medium">लेख उघडत आहे (Loading article)...</p>
+      </div>
+    );
+  }
 
   if (!post) return null;
 
-  // ब्लॉगची भाषा मराठी आहे की इंग्रजी हे ओळखण्यासाठी अट
-  const isMarathi = post.language && post.language.toLowerCase().trim() !== 'english';
+  // --- सुधारित भाषेची अट (Improved Language Check) ---
+  const lang = post.language ? post.language.toLowerCase().trim() : 'english';
+  
+  let shareTitle = 'Share this article';
+  let copyLinkText = 'Copy Link';
+  let linkCopiedAlert = 'Link Copied!';
+  
+  // जर भाषा 'kannada' असेल तर कन्नड, नाहीतर जर इंग्रजी नसेल तर थेट मराठी
+  if (lang.includes('kannada')) {
+    shareTitle = 'ಈ ಲೇಖನವನ್ನು ಶೇರ್ ಮಾಡಿ';
+    copyLinkText = 'ಲಿಂಕ್ ಕಾಪಿ ಮಾಡಿ';
+    linkCopiedAlert = 'ಲಿಂಕ್ ಕಾಪಿ ಮಾಡಲಾಗಿದೆ!';
+  } else if (lang !== 'english') {
+    shareTitle = 'हा लेख शेअर करा';
+    copyLinkText = 'लिंक कॉपी करा';
+    linkCopiedAlert = 'लिंक कॉपी केली!';
+  }
+
+  // फॉन्टचा क्लास सुद्धा भाषेनुसार
+  const fontClass = (lang !== 'english') ? 'font-marathi-title' : 'font-display';
+  // ----------------------------------------------------
 
   const renderContent = (text) => {
     if (!text) return null;
@@ -69,7 +121,6 @@ const BlogPost = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           
-          {/* डावी बाजू: मुख्य ब्लॉग */}
           <div className="lg:col-span-2 bg-white rounded-3xl overflow-hidden border border-[#eee6d3] shadow-lg">
             <div className="h-[400px] w-full bg-[#f4ecd1]">
               <img 
@@ -85,21 +136,19 @@ const BlogPost = () => {
                 {post.category && <span className="bg-[#f4ecd1] text-[#2d5a3d] px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">{post.category}</span>}
               </div>
               
-              <h1 className={`text-4xl text-[#1c2a1e] mb-10 leading-tight ${isMarathi ? 'font-marathi-title' : 'font-display'}`}>
+              <h1 className={`text-4xl text-[#1c2a1e] mb-10 leading-tight ${fontClass}`}>
                 {post.title}
               </h1>
               
               <div className="prose max-w-none">{renderContent(post.content)}</div>
 
-              {/* --- शेअरिंग सेक्शन --- */}
               <div className="mt-10 pt-6 border-t border-[#eee6d3]">
                 <h4 className="text-lg font-bold text-[#1c2a1e] mb-4 flex items-center gap-2">
                   <Share2 className="w-5 h-5 text-[#2d5a3d]" /> 
-                  {isMarathi ? 'हा लेख शेअर करा' : 'Share this article'}
+                  {shareTitle}
                 </h4>
                 
                 <div className="flex flex-wrap gap-3">
-                  {/* WhatsApp Share */}
                   <a 
                     href={`https://wa.me/?text=${encodeURIComponent(post.title + " - " + window.location.href)}`} 
                     target="_blank" 
@@ -108,8 +157,6 @@ const BlogPost = () => {
                   >
                     <MessageCircle className="w-4 h-4" /> WhatsApp
                   </a>
-
-                  {/* Facebook Share */}
                   <a 
                     href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`} 
                     target="_blank" 
@@ -118,8 +165,6 @@ const BlogPost = () => {
                   >
                     <Facebook className="w-4 h-4" /> Facebook
                   </a>
-
-                  {/* LinkedIn Share */}
                   <a 
                     href={`https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(window.location.href)}&title=${encodeURIComponent(post.title)}`} 
                     target="_blank" 
@@ -128,40 +173,35 @@ const BlogPost = () => {
                   >
                     <Linkedin className="w-4 h-4" /> LinkedIn
                   </a>
-
-                  {/* Copy Link Button */}
                   <button 
                     onClick={() => {
                       navigator.clipboard.writeText(window.location.href);
-                      alert(isMarathi ? 'लिंक कॉपी केली!' : 'Link Copied!');
+                      alert(linkCopiedAlert);
                     }}
                     className="flex items-center gap-2 px-4 py-2 text-sm bg-white border border-[#eee6d3] text-[#1c2a1e] rounded-full hover:bg-[#f4ecd1] transition-all font-medium shadow-sm"
                   >
                     <Link2 className="w-4 h-4 text-[#2d5a3d]" /> 
-                    {isMarathi ? 'लिंक कॉपी करा' : 'Copy Link'}
+                    {copyLinkText}
                   </button>
                 </div>
               </div>
-              {/* --- शेअरिंग सेक्शन समाप्त --- */}
 
             </div>
           </div>
 
-          {/* उजवी बाजू: Sidebar */}
           <div className="lg:col-span-1">
             <div className="sticky top-28 bg-white p-6 rounded-3xl border border-[#eee6d3] shadow-sm">
               <h3 className="font-display text-2xl text-[#1c2a1e] mb-6 border-b border-[#eee6d3] pb-4">
                 New On The Blog
               </h3>
               <div className="flex flex-col gap-6">
-                {recentPosts.map((rPost, index) => (
+                {recentPosts.map((rPost) => (
                   <Link 
-                    key={index} 
-                    to={`/blog/${Date.now() + index}`} 
+                    key={rPost.originalId} 
+                    to={`/blog/${rPost.originalId}`} 
                     state={{ post: rPost }} 
                     className="flex gap-4 group items-start"
                   >
-                    {/* येथे फोटोचा प्रॉब्लेम सोडवला आहे */}
                     <img 
                       src={rPost.image || 'https://placehold.co/150x150/e8e0c8/1c2a1e?text=Blog'} 
                       onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/150x150/e8e0c8/1c2a1e?text=Blog'; }}

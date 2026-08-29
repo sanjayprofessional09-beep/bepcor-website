@@ -8,14 +8,12 @@ const Blog = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const postsPerPage = 6; 
   
-  // Header मधून आलेली भाषा ओळखण्यासाठी नवीन बदल
   const location = useLocation();
   const [activeLanguage, setActiveLanguage] = useState(location.state?.lang || 'English');
 
-  // तुमची Google Sheet ची लिंक
+  // तुमची Google Sheet ची लिंक इथे टाका
   const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbyF2p-ozMkvgYmglru9-s5-zN0NE2yMVBNcrUDj_YE51R29p-PU4btQFnpAXrnipDHhbw/exec";
 
-  // जर युझरने Header मधून भाषा बदलली, तर पेजवर ती भाषा लगेच बदलण्यासाठी
   useEffect(() => {
     if (location.state?.lang) {
       setActiveLanguage(location.state.lang);
@@ -28,7 +26,9 @@ const Blog = () => {
     fetch(GOOGLE_SHEET_URL, { redirect: 'follow', credentials: 'omit' })
       .then(res => res.json())
       .then(data => {
-        setPosts(data.reverse());
+        // येथे आपण लिस्ट उलटी करण्यापूर्वीच कायमचा (Permanent) ID देत आहोत
+        const postsWithId = data.map((p, index) => ({ ...p, originalId: index })).reverse();
+        setPosts(postsWithId);
         setLoading(false);
       })
       .catch(err => {
@@ -108,8 +108,8 @@ const Blog = () => {
         ) : (
           <>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {currentPosts.map((post, index) => (
-                <Link to={`/blog/${indexOfFirstPost + index}`} state={{ post }} key={index} className="bg-white rounded-2xl overflow-hidden border border-[#eee6d3] hover:shadow-xl transition-shadow group flex flex-col">
+              {currentPosts.map((post) => (
+                <Link to={`/blog/${post.originalId}`} state={{ post }} key={post.originalId} className="bg-white rounded-2xl overflow-hidden border border-[#eee6d3] hover:shadow-xl transition-shadow group flex flex-col">
                   <div className="h-56 overflow-hidden relative flex-none bg-[#f4ecd1]">
                     <img 
                       src={post.image || 'https://placehold.co/800x600/e8e0c8/1c2a1e?text=BEPCoR+Blog'} 
@@ -124,7 +124,6 @@ const Blog = () => {
                       <span className="flex items-center gap-1"><User className="w-3.5 h-3.5" /> {post.author}</span>
                     </div>
                     
-                    {/* येथे आपण मराठी आणि इंग्रजी हेडलाईनसाठी वेगळा क्लास लावण्याची अट टाकली आहे */}
                     <h3 className={`text-2xl text-[#1c2a1e] mb-3 group-hover:text-[#2d5a3d] ${post.language && post.language.toLowerCase().trim() !== 'english' ? 'font-marathi-title' : 'font-display'}`}>
                       {post.title}
                     </h3>
