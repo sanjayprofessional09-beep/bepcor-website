@@ -161,10 +161,12 @@ const BlogPost = () => {
                     state={{ post: rPost }} 
                     className="flex gap-4 group items-start"
                   >
+                    {/* येथे फोटोचा प्रॉब्लेम सोडवला आहे */}
                     <img 
-                      src={rPost.image && rPost.image.startsWith('http') ? rPost.image : 'https://placehold.co/150x150/e8e0c8/1c2a1e?text=Blog'} 
-                      className="w-20 h-20 object-cover rounded-lg flex-none" 
-                      alt="thumbnail"
+                      src={rPost.image || 'https://placehold.co/150x150/e8e0c8/1c2a1e?text=Blog'} 
+                      onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/150x150/e8e0c8/1c2a1e?text=Blog'; }}
+                      className="w-20 h-20 object-cover rounded-lg flex-none bg-[#f4ecd1]" 
+                      alt={rPost.title || "thumbnail"}
                     />
                     <div className="flex flex-col">
                       <h4 className="font-medium text-[#1c2a1e] group-hover:text-[#2d5a3d] leading-tight line-clamp-3 transition-colors">
