@@ -56,8 +56,15 @@ const BlogPost = () => {
   if (loading && !post) {
     return (
       <div className="pt-32 pb-20 flex flex-col items-center justify-center min-h-screen bg-[#fcfaf5]">
-        <Loader2 className="w-10 h-10 animate-spin text-[#2d5a3d] mb-4" />
-        <p className="text-[#5a6f5c] font-medium">लेख उघडत आहे (Loading article)...</p>
+        {/* षटकोनी लोडिंग अ‍ॅनिमेशन */}
+        <div className="relative w-16 h-16 flex items-center justify-center mb-5">
+          {/* फिरणारा षटकोन */}
+          <div className="absolute inset-0 border-4 border-[#2d5a3d] border-t-transparent rounded-[18px] animate-spin"></div>
+          {/* षटकोनाच्या रेषेतून फिरणारा पांढरा पॉईंट */}
+          <div className="absolute w-3 h-3 bg-white rounded-full shadow-md animate-ping"></div>
+          <div className="absolute w-2.5 h-2.5 bg-white rounded-full shadow"></div>
+        </div>
+        <p className="text-[#5a6f5c] font-medium tracking-wide">Loading...</p>
       </div>
     );
   }
