@@ -11,7 +11,7 @@ const BlogPost = () => {
   const [recentPosts, setRecentPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   
-  // तुमची Google Sheet ची लिंक इथे टाका
+  // तुमची Google Sheet ची लिंक
   const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbyF2p-ozMkvgYmglru9-s5-zN0NE2yMVBNcrUDj_YE51R29p-PU4btQFnpAXrnipDHhbw/exec";
 
   useEffect(() => {
@@ -56,13 +56,69 @@ const BlogPost = () => {
   if (loading && !post) {
     return (
       <div className="pt-32 pb-20 flex flex-col items-center justify-center min-h-screen bg-[#fcfaf5]">
-        {/* षटकोनी लोडिंग अ‍ॅनिमेशन */}
-        <div className="relative w-16 h-16 flex items-center justify-center mb-5">
-          {/* फिरणारा षटकोन */}
-          <div className="absolute inset-0 border-4 border-[#2d5a3d] border-t-transparent rounded-[18px] animate-spin"></div>
-          {/* षटकोनाच्या रेषेतून फिरणारा पांढरा पॉईंट */}
-          <div className="absolute w-3 h-3 bg-white rounded-full shadow-md animate-ping"></div>
-          <div className="absolute w-2.5 h-2.5 bg-white rounded-full shadow"></div>
+        <style>{`
+          /* ग्रॅडियंट रंग जो एकदा भरला की कायम राहील (forwards मुळे) */
+          .hex-gradient-fill {
+            stroke-dasharray: 100;
+            animation: fillGradient 2.5s linear forwards; 
+          }
+          /* पांढरा पॉईंट जो सतत फिरत राहील (infinite मुळे) */
+          .hex-dot {
+            stroke-dasharray: 0.1 99.9;
+            animation: traceDot 2.5s linear infinite; 
+          }
+          
+          @keyframes fillGradient {
+            0% { stroke-dashoffset: 100; }
+            100% { stroke-dashoffset: 0; }
+          }
+          @keyframes traceDot {
+            0% { stroke-dashoffset: 100; }
+            100% { stroke-dashoffset: 0; }
+          }
+        `}</style>
+        
+        <div className="mb-5 flex items-center justify-center">
+          <svg width="42" height="42" viewBox="0 0 50 50" className="drop-shadow-md">
+            <defs>
+              <linearGradient id="logoGradient" x1="0%" y1="100%" x2="100%" y2="0%">
+                <stop offset="0%" stopColor="#2b4c9b" />
+                <stop offset="50%" stopColor="#0b827a" />
+                <stop offset="100%" stopColor="#00a752" />
+              </linearGradient>
+            </defs>
+
+            {/* १. सर्वात खालचा स्थिर रस्ता (मूळ हिरवा रंग) */}
+            <polygon 
+              points="25,3 45,14.5 45,35.5 25,47 5,35.5 5,14.5" 
+              fill="none" 
+              stroke="#2d5a3d" 
+              strokeWidth="7" 
+              strokeLinejoin="round"
+            />
+            {/* २. पांढऱ्या पॉईंटच्या मागे धावणारा आणि कायम राहणारा ग्रॅडियंट रंग */}
+            <polygon 
+              points="25,3 45,14.5 45,35.5 25,47 5,35.5 5,14.5" 
+              fill="none" 
+              stroke="url(#logoGradient)" 
+              strokeWidth="7" 
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              pathLength="100"
+              className="hex-gradient-fill" 
+            />
+            {/* ३. आतून फिरणारा पांढरा गोल (सर्वात वर) */}
+            <polygon 
+              points="25,3 45,14.5 45,35.5 25,47 5,35.5 5,14.5" 
+              fill="none" 
+              stroke="#ffffff" 
+              strokeWidth="3" 
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              pathLength="100"
+              className="hex-dot" 
+            />
+          </svg>
         </div>
         <p className="text-[#5a6f5c] font-medium tracking-wide">Loading...</p>
       </div>
@@ -71,14 +127,12 @@ const BlogPost = () => {
 
   if (!post) return null;
 
-  // --- सुधारित भाषेची अट (Improved Language Check) ---
   const lang = post.language ? post.language.toLowerCase().trim() : 'english';
   
   let shareTitle = 'Share this article';
   let copyLinkText = 'Copy Link';
   let linkCopiedAlert = 'Link Copied!';
   
-  // जर भाषा 'kannada' असेल तर कन्नड, नाहीतर जर इंग्रजी नसेल तर थेट मराठी
   if (lang.includes('kannada')) {
     shareTitle = 'ಈ ಲೇಖನವನ್ನು ಶೇರ್ ಮಾಡಿ';
     copyLinkText = 'ಲಿಂಕ್ ಕಾಪಿ ಮಾಡಿ';
@@ -89,9 +143,7 @@ const BlogPost = () => {
     linkCopiedAlert = 'लिंक कॉपी केली!';
   }
 
-  // फॉन्टचा क्लास सुद्धा भाषेनुसार
   const fontClass = (lang !== 'english') ? 'font-marathi-title' : 'font-display';
-  // ----------------------------------------------------
 
   const renderContent = (text) => {
     if (!text) return null;
