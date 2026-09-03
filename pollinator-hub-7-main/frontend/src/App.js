@@ -13,6 +13,7 @@ import Contact from './pages/Contact';
 import { Toaster } from './components/ui/toaster';
 import Blog from './pages/Blog';
 import BlogPost from './pages/BlogPost';
+import MushroomForm from './MushroomForm';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -38,6 +39,7 @@ function App() {
             <Route path="/contact" element={<Contact />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:id" element={<BlogPost />} />
+            <Route path="/training/mushroom" element={<MushroomForm />} />
             <Route path="*" element={<h1>404 - Page Not Found</h1>} />
           </Routes>
         </main>

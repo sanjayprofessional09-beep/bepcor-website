@@ -9,6 +9,7 @@ const navItems = [
   { label: 'About', to: '/about' },
   { label: 'Pollinators', to: '/pollinators' },
   { label: 'Programs', to: '/programs' },
+  { label: 'Training', to: '/training/mushroom' }, // नवीन Training मेनू जोडला
   { label: 'Get Involved', to: '/get-involved' },
   { label: 'Resources', to: '/resources' },
   { label: 'Blog', to: '/blog' }, 
@@ -42,26 +43,49 @@ const Header = () => {
 
           {/* Desktop Nav */}
           <nav className="hidden xl:flex items-center gap-7">
-            {navItems.map((item) => (
-              item.label === 'Blog' ? (
-                <div key={item.to} className="relative group">
-                  <NavLink to={item.to} className={({ isActive }) => `flex items-center gap-1 text-sm font-medium transition-colors ${isActive ? 'text-[#2d5a3d]' : 'text-[#1c2a1e] hover:text-[#2d5a3d]'}`}>
-                    {item.label} <ChevronDown className="w-4 h-4" />
-                  </NavLink>
-                  {/* Dropdown Box */}
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 pt-6 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
-                    <div className="w-44 bg-white border border-[#eee6d3] shadow-xl rounded-xl overflow-hidden flex flex-col">
-                      <Link to="/blog" state={{ lang: 'English' }} className="px-5 py-3.5 text-sm font-medium text-[#1c2a1e] hover:bg-[#f4ecd1] hover:text-[#2d5a3d] transition-colors border-b border-[#eee6d3]">English</Link>
-                      <Link to="/blog" state={{ lang: 'Marathi' }} className="px-5 py-3.5 text-sm font-medium text-[#1c2a1e] hover:bg-[#f4ecd1] hover:text-[#2d5a3d] transition-colors">मराठी / ಕನ್ನಡ</Link>
+            {navItems.map((item) => {
+              // Blog Dropdown
+              if (item.label === 'Blog') {
+                return (
+                  <div key={item.to} className="relative group">
+                    <NavLink to={item.to} className={({ isActive }) => `flex items-center gap-1 text-sm font-medium transition-colors ${isActive ? 'text-[#2d5a3d]' : 'text-[#1c2a1e] hover:text-[#2d5a3d]'}`}>
+                      {item.label} <ChevronDown className="w-4 h-4" />
+                    </NavLink>
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 pt-6 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
+                      <div className="w-44 bg-white border border-[#eee6d3] shadow-xl rounded-xl overflow-hidden flex flex-col">
+                        <Link to="/blog" state={{ lang: 'English' }} className="px-5 py-3.5 text-sm font-medium text-[#1c2a1e] hover:bg-[#f4ecd1] hover:text-[#2d5a3d] transition-colors border-b border-[#eee6d3]">English</Link>
+                        <Link to="/blog" state={{ lang: 'Marathi' }} className="px-5 py-3.5 text-sm font-medium text-[#1c2a1e] hover:bg-[#f4ecd1] hover:text-[#2d5a3d] transition-colors">मराठी / ಕನ್ನಡ</Link>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ) : (
+                );
+              }
+              
+              // नवीन: Training Dropdown
+              if (item.label === 'Training') {
+                return (
+                  <div key={item.to} className="relative group">
+                    <button className="flex items-center gap-1 text-sm font-medium transition-colors text-[#1c2a1e] hover:text-[#2d5a3d]">
+                      {item.label} <ChevronDown className="w-4 h-4" />
+                    </button>
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 pt-6 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
+                      <div className="w-48 bg-white border border-[#eee6d3] shadow-xl rounded-xl overflow-hidden flex flex-col">
+                        <Link to="/training/mushroom" className="px-5 py-3.5 text-sm font-medium text-[#1c2a1e] hover:bg-[#f4ecd1] hover:text-[#2d5a3d] transition-colors">
+                          Mushroom Training
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+
+              // Normal Links
+              return (
                 <NavLink key={item.to} to={item.to} end={item.to === '/'} className={({ isActive }) => `text-sm font-medium link-underline transition-colors ${isActive ? 'text-[#2d5a3d]' : 'text-[#1c2a1e] hover:text-[#2d5a3d]'}`}>
                   {item.label}
                 </NavLink>
-              )
-            ))}
+              );
+            })}
           </nav>
 
           <div className="hidden xl:block">
@@ -79,23 +103,45 @@ const Header = () => {
       {/* Mobile Nav */}
       <div className={`xl:hidden overflow-hidden bg-[#fdfaf3] border-t border-[#eee6d3] transition-[max-height] duration-500 ${open ? 'max-h-[600px]' : 'max-h-0'}`}>
         <div className="px-5 py-4 flex flex-col gap-1">
-          {navItems.map((item) => (
-            item.label === 'Blog' ? (
-              <div key={item.to} className="flex flex-col">
-                <NavLink to={item.to} className={({ isActive }) => `py-3 px-3 rounded-lg text-base font-medium flex justify-between items-center ${isActive ? 'text-[#2d5a3d] bg-[#f2ecdb]' : 'text-[#1c2a1e]'}`}>
-                  {item.label}
-                </NavLink>
-                <div className="flex flex-col ml-6 my-1 border-l-2 border-[#eee6d3]">
-                  <Link to="/blog" state={{ lang: 'English' }} className="py-2.5 px-4 text-sm font-medium text-[#5a6f5c] hover:text-[#2d5a3d]">English</Link>
-                  <Link to="/blog" state={{ lang: 'Marathi' }} className="py-2.5 px-4 text-sm font-medium text-[#5a6f5c] hover:text-[#2d5a3d]">मराठी / ಕನ್ನಡ</Link>
+          {navItems.map((item) => {
+            // Mobile Blog Dropdown
+            if (item.label === 'Blog') {
+              return (
+                <div key={item.to} className="flex flex-col">
+                  <NavLink to={item.to} className={({ isActive }) => `py-3 px-3 rounded-lg text-base font-medium flex justify-between items-center ${isActive ? 'text-[#2d5a3d] bg-[#f2ecdb]' : 'text-[#1c2a1e]'}`}>
+                    {item.label}
+                  </NavLink>
+                  <div className="flex flex-col ml-6 my-1 border-l-2 border-[#eee6d3]">
+                    <Link to="/blog" state={{ lang: 'English' }} className="py-2.5 px-4 text-sm font-medium text-[#5a6f5c] hover:text-[#2d5a3d]">English</Link>
+                    <Link to="/blog" state={{ lang: 'Marathi' }} className="py-2.5 px-4 text-sm font-medium text-[#5a6f5c] hover:text-[#2d5a3d]">मराठी / ಕನ್ನಡ</Link>
+                  </div>
                 </div>
-              </div>
-            ) : (
+              );
+            }
+
+            // नवीन: Mobile Training Dropdown
+            if (item.label === 'Training') {
+              return (
+                <div key={item.to} className="flex flex-col">
+                  <div className="py-3 px-3 rounded-lg text-base font-medium flex justify-between items-center text-[#1c2a1e]">
+                    {item.label}
+                  </div>
+                  <div className="flex flex-col ml-6 my-1 border-l-2 border-[#eee6d3]">
+                    <Link to="/training/mushroom" className="py-2.5 px-4 text-sm font-medium text-[#5a6f5c] hover:text-[#2d5a3d]">
+                      Mushroom Training
+                    </Link>
+                  </div>
+                </div>
+              );
+            }
+
+            // Normal Mobile Links
+            return (
               <NavLink key={item.to} to={item.to} end={item.to === '/'} className={({ isActive }) => `py-3 px-3 rounded-lg text-base font-medium ${isActive ? 'text-[#2d5a3d] bg-[#f2ecdb]' : 'text-[#1c2a1e]'}`}>
                 {item.label}
               </NavLink>
-            )
-          ))}
+            );
+          })}
           <Link to="/get-involved" className="mt-2">
             <Button className="w-full bg-[#2d5a3d] hover:bg-[#234a31] text-white rounded-full h-12">Join the Cause</Button>
           </Link>
