@@ -9,11 +9,11 @@ const navItems = [
   { label: 'About', to: '/about' },
   { label: 'Pollinators', to: '/pollinators' },
   { label: 'Programs', to: '/programs' },
-  { label: 'Training', to: '/training/mushroom' }, // नवीन Training मेनू जोडला
   { label: 'Get Involved', to: '/get-involved' },
   { label: 'Resources', to: '/resources' },
   { label: 'Blog', to: '/blog' }, 
   { label: 'Contact', to: '/contact' },
+  { label: 'Training', to: '/training/mushroom' }, // नवीन Training मेनू जोडला
 ];
 
 const Header = () => {

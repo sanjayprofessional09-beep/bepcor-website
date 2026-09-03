@@ -13,7 +13,7 @@ import Contact from './pages/Contact';
 import { Toaster } from './components/ui/toaster';
 import Blog from './pages/Blog';
 import BlogPost from './pages/BlogPost';
-import MushroomForm from './MushroomForm';
+import MushroomForm from './pages/MushroomForm';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
