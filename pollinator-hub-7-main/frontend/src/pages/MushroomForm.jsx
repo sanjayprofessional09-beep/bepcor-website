@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const MushroomForm = () => {
   const [formData, setFormData] = useState({
@@ -10,6 +10,25 @@ const MushroomForm = () => {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // CAPTCHA साठी State
+  const [captchaText, setCaptchaText] = useState('');
+  const [userInputCaptcha, setUserInputCaptcha] = useState('');
+
+  // रँडम स्मॉल, कॅपिटल अक्षरे आणि अंक (a-z, A-Z, 0-9) तयार करणारे फंक्शन
+  const generateCaptcha = () => {
+    const chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    let result = "";
+    for (let i = 0; i < 6; i++) {
+      result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    setCaptchaText(result);
+  };
+
+  // पेज लोड झाल्यावर CAPTCHA तयार करा
+  useEffect(() => {
+    generateCaptcha();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -26,10 +45,18 @@ const MushroomForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    // CAPTCHA ची तंतोतंत (कॅपिटल/स्मॉल) तपासणी
+    if (userInputCaptcha !== captchaText) {
+      alert("तुम्ही टाकलेला सिक्युरिटी कोड (CAPTCHA) चुकीचा आहे. कृपया कॅपिटल आणि स्मॉल अक्षरे तपासून पुन्हा लिहा.");
+      generateCaptcha(); 
+      setUserInputCaptcha(''); 
+      return; 
+    }
+
     setIsSubmitting(true);
 
-    // १. येथे तुमची Google Apps Script ची वेब अ‍ॅप लिंक टाका
-    const scriptURL = "https://script.google.com/macros/s/AKfycbwovmrFMGjWOAEhdCORElWwC_rlLMQ3Mvjj0Y6mEVGU863GDJfPFWdGBebgr-sSQB8/exec";
+    const scriptURL = "https://script.google.com/macros/s/AKfycbwovmrFMGjWOAEhdCORElWwC_rlLMQ3Mvjj0Y6mEVGU863GDJfPFWdGBebgr-sSQB8/exec"; // येथे तुमची Google Sheet ची लिंक टाका
 
     fetch(scriptURL, {
       method: 'POST',
@@ -55,7 +82,6 @@ const MushroomForm = () => {
     <div className="min-h-screen bg-[#fcfaf5] py-12 px-4 sm:px-6 lg:px-8 font-mukta">
       <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden border border-[#eee6d3]">
         
-        {/* Header Section */}
         <div className="bg-[#2d5a3d] px-6 py-8 text-center text-white">
           <h1 className="text-2xl md:text-3xl font-bold mb-2 font-display tracking-wide">BEPCOR</h1>
           <p className="text-sm md:text-base text-[#e8e0c8] mb-4 uppercase tracking-widest">
@@ -67,10 +93,8 @@ const MushroomForm = () => {
           <p className="text-lg mt-1 text-white opacity-90">प्रवेश अर्ज (Application Form)</p>
         </div>
 
-        {/* Form Section */}
         <form onSubmit={handleSubmit} className="p-6 md:p-10 space-y-10 text-[#1c2a1e]">
           
-          {/* भाग १: वैयक्तिक माहिती */}
           <section>
             <h3 className="text-xl font-bold border-b-2 border-[#d4a33c] pb-2 mb-6 text-[#2d5a3d]">
               भाग १: वैयक्तिक माहिती (Personal Details)
@@ -78,7 +102,7 @@ const MushroomForm = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="md:col-span-2">
                 <label className="block text-sm font-semibold mb-2">१. संपूर्ण नाव (Full Name): *</label>
-                <input type="text" name="fullName" required onChange={handleChange} className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d5a3d] focus:border-transparent" />
+                <input type="text" name="fullName" required onChange={handleChange} className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d5a3d]" />
               </div>
               <div className="md:col-span-2">
                 <label className="block text-sm font-semibold mb-2">२. संपूर्ण पत्ता (Address):</label>
@@ -108,7 +132,6 @@ const MushroomForm = () => {
             </div>
           </section>
 
-          {/* भाग २: व्यावसायिक माहिती */}
           <section>
             <h3 className="text-xl font-bold border-b-2 border-[#d4a33c] pb-2 mb-6 text-[#2d5a3d]">
               भाग २: व्यावसायिक माहिती (Professional Background)
@@ -147,7 +170,6 @@ const MushroomForm = () => {
             </div>
           </section>
 
-          {/* भाग ३: प्रशिक्षणाविषयी माहिती */}
           <section>
             <h3 className="text-xl font-bold border-b-2 border-[#d4a33c] pb-2 mb-6 text-[#2d5a3d]">
               भाग ३: प्रशिक्षणाविषयी माहिती (Training Objective)
@@ -174,7 +196,6 @@ const MushroomForm = () => {
             </div>
           </section>
 
-          {/* भाग ४: शुल्क आणि नोंदणी तपशील */}
           <section>
             <h3 className="text-xl font-bold border-b-2 border-[#d4a33c] pb-2 mb-6 text-[#2d5a3d]">
               भाग ४: शुल्क आणि नोंदणी तपशील (Payment Details)
@@ -191,13 +212,11 @@ const MushroomForm = () => {
                   ))}
                 </div>
                 
-                {/* QR Code Section - फक्त UPI निवडल्यावर दिसेल */}
                 {formData.paymentMode === 'UPI / GPay / PhonePe' && (
                   <div className="mt-6 p-6 border-2 border-dashed border-[#2d5a3d] bg-[#f4ecd1]/30 rounded-xl text-center max-w-sm mx-auto">
                     <p className="text-lg font-bold text-[#1c2a1e] mb-1">स्कॅन करून फी भरा (Scan to Pay)</p>
                     <p className="text-xl font-black text-[#2d5a3d] mb-4">प्रशिक्षण फी: ₹१५००</p>
                     
-                    {/* डायनॅमिक QR कोड (थेट 1500 रुपये आणि तुमचा UPI ID घेईल) */}
                     <img 
                       src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=upi%3A%2F%2Fpay%3Fpa%3D9552958464m%40pnb%26pn%3DBEPCOR%26am%3D1500%26cu%3DINR" 
                       alt="BEPCOR Payment QR Code" 
@@ -207,7 +226,6 @@ const MushroomForm = () => {
                     <p className="text-sm font-semibold text-[#5a6f5c] mt-3">UPI ID: 9552958464m@pnb</p>
                   </div>
                 )}
-
               </div>
               <div>
                 <label className="block text-sm font-semibold mb-2">१२. भरलेली रक्कम (Amount Paid):</label>
@@ -224,7 +242,39 @@ const MushroomForm = () => {
             </div>
           </section>
 
-          {/* Submit Button */}
+          {/* CAPTCHA Section */}
+          <section className="bg-[#f4ecd1]/50 p-6 rounded-xl border border-[#eee6d3]">
+            <label className="block text-sm font-bold mb-4 text-[#1c2a1e]">१५. सिक्युरिटी पडताळणी (Security Verification): *</label>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+              
+              <div 
+                className="bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjIiIGZpbGw9IiNlZWU2ZDMiLz48L3N2Zz4=')] 
+                px-8 py-3 text-2xl font-black tracking-[0.4em] text-[#2d5a3d] border-2 border-dashed border-[#2d5a3d] select-none pointer-events-none rounded-lg shadow-inner"
+                style={{ textDecoration: "line-through", textShadow: "2px 2px 4px rgba(0,0,0,0.1)" }}
+              >
+                {captchaText}
+              </div>
+              
+              <button 
+                type="button" 
+                onClick={generateCaptcha} 
+                className="text-sm font-medium text-[#d4a33c] hover:text-[#2d5a3d] underline transition-colors"
+              >
+                दुसरा कोड द्या (Refresh)
+              </button>
+            </div>
+            
+            <input 
+              type="text" 
+              value={userInputCaptcha}
+              onChange={(e) => setUserInputCaptcha(e.target.value)}
+              placeholder="वरील कोड जसाच्या तसा इथे लिहा" 
+              required
+              maxLength={6}
+              className="mt-4 w-full md:w-1/2 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d5a3d] font-bold tracking-widest" 
+            />
+          </section>
+
           <div className="pt-6 border-t border-gray-200">
             <button 
               type="submit" 
