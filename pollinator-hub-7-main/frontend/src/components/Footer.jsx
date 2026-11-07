@@ -9,10 +9,19 @@ import api from '../lib/api';
 
 const Footer = () => {
   const [email, setEmail] = useState('');
+  const [honeypot, setHoneypot] = useState(''); // <-- स्पॅम रोखण्यासाठी नवीन State जोडली
   const [busy, setBusy] = useState(false);
 
   const submit = async (e) => {
     e.preventDefault();
+
+    // === स्पॅम/बॉट चेकिंग (Honeypot) ===
+    if (honeypot !== '') {
+      // जर बॉटने लपवलेला रकाना भरला, तर फॉर्म इथेच थांबेल. युजरला काहीही दिसणार नाही (Silent Block).
+      console.log("Spam bot detected and blocked!");
+      return; 
+    }
+
     if (!email || !email.includes('@')) {
       toast({ title: 'Please enter a valid email', variant: 'destructive' });
       return;
@@ -61,6 +70,18 @@ const Footer = () => {
           <form onSubmit={submit} className="flex flex-col justify-center">
             <label className="text-xs uppercase tracking-[0.2em] text-[#c8c0a8] mb-3">Newsletter</label>
             <div className="flex flex-col sm:flex-row gap-3">
+              
+              {/* === लपवलेला हनीपॉट रकाना (Invisible Honeypot Field) === */}
+              <input 
+                type="text" 
+                name="honeypot" 
+                value={honeypot} 
+                onChange={(e) => setHoneypot(e.target.value)} 
+                style={{ display: 'none' }} // माणसांना दिसणार नाही
+                tabIndex="-1" 
+                autoComplete="off" 
+              />
+
               <Input
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -105,7 +126,7 @@ const Footer = () => {
             <ul className="space-y-3 text-sm">
               <li><Link to="/about" className="link-underline hover:text-white">About Us</Link></li>
               <li><Link to="/programs" className="link-underline hover:text-white">Programs</Link></li>
-              <li><Link to="/blog" className="link-underline hover:text-white">Blog</Link></li> {/* <-- इथे आपण Blog ॲड केला आहे */}
+              <li><Link to="/blog" className="link-underline hover:text-white">Blog</Link></li>
               <li><Link to="/resources" className="link-underline hover:text-white">Field Journal</Link></li>
               <li><Link to="/get-involved" className="link-underline hover:text-white">Volunteer</Link></li>
               <li><Link to="/get-involved" className="link-underline hover:text-white">Donate</Link></li>

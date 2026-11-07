@@ -13,7 +13,7 @@ const navItems = [
   { label: 'Resources', to: '/resources' },
   { label: 'Blog', to: '/blog' }, 
   { label: 'Contact', to: '/contact' },
-  { label: 'Training', to: '/training/mushroom' }, // नवीन Training मेनू जोडला
+  { label: 'Training', to: '/training/mushroom' }, 
 ];
 
 const Header = () => {
@@ -61,7 +61,7 @@ const Header = () => {
                 );
               }
               
-              // नवीन: Training Dropdown
+              // === नवीन: Training Dropdown (५ लिंक्स जोडल्या) ===
               if (item.label === 'Training') {
                 return (
                   <div key={item.to} className="relative group">
@@ -69,10 +69,12 @@ const Header = () => {
                       {item.label} <ChevronDown className="w-4 h-4" />
                     </button>
                     <div className="absolute top-full left-1/2 -translate-x-1/2 pt-6 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
-                      <div className="w-48 bg-white border border-[#eee6d3] shadow-xl rounded-xl overflow-hidden flex flex-col">
-                        <Link to="/training/mushroom" className="px-5 py-3.5 text-sm font-medium text-[#1c2a1e] hover:bg-[#f4ecd1] hover:text-[#2d5a3d] transition-colors">
-                          Mushroom Training
-                        </Link>
+                      <div className="w-56 bg-white border border-[#eee6d3] shadow-xl rounded-xl overflow-hidden flex flex-col">
+                        <Link to="/training/mushroom" className="px-5 py-3.5 text-sm font-medium text-[#1c2a1e] hover:bg-[#f4ecd1] transition-colors border-b border-[#eee6d3]">Mushroom</Link>
+                        <Link to="/training/beekeeping" className="px-5 py-3.5 text-sm font-medium text-[#1c2a1e] hover:bg-[#f4ecd1] transition-colors border-b border-[#eee6d3]">Beekeeping</Link>
+                        <Link to="/training/dairy" className="px-5 py-3.5 text-sm font-medium text-[#1c2a1e] hover:bg-[#f4ecd1] transition-colors border-b border-[#eee6d3]">Dairy</Link>
+                        <Link to="/training/sericulture" className="px-5 py-3.5 text-sm font-medium text-[#1c2a1e] hover:bg-[#f4ecd1] transition-colors border-b border-[#eee6d3]">Sericulture</Link>
+                        <Link to="/training/goat-farming" className="px-5 py-3.5 text-sm font-medium text-[#1c2a1e] hover:bg-[#f4ecd1] transition-colors">Goat Farming</Link>
                       </div>
                     </div>
                   </div>
@@ -119,7 +121,7 @@ const Header = () => {
               );
             }
 
-            // नवीन: Mobile Training Dropdown
+            // === नवीन: Mobile Training Dropdown (५ लिंक्स) ===
             if (item.label === 'Training') {
               return (
                 <div key={item.to} className="flex flex-col">
@@ -127,9 +129,11 @@ const Header = () => {
                     {item.label}
                   </div>
                   <div className="flex flex-col ml-6 my-1 border-l-2 border-[#eee6d3]">
-                    <Link to="/training/mushroom" className="py-2.5 px-4 text-sm font-medium text-[#5a6f5c] hover:text-[#2d5a3d]">
-                      Mushroom Training
-                    </Link>
+                    <Link to="/training/mushroom" className="py-2.5 px-4 text-sm font-medium text-[#5a6f5c] hover:text-[#2d5a3d]">Mushroom</Link>
+                    <Link to="/training/beekeeping" className="py-2.5 px-4 text-sm font-medium text-[#5a6f5c] hover:text-[#2d5a3d]">Beekeeping</Link>
+                    <Link to="/training/dairy" className="py-2.5 px-4 text-sm font-medium text-[#5a6f5c] hover:text-[#2d5a3d]">Dairy</Link>
+                    <Link to="/training/sericulture" className="py-2.5 px-4 text-sm font-medium text-[#5a6f5c] hover:text-[#2d5a3d]">Sericulture</Link>
+                    <Link to="/training/goat-farming" className="py-2.5 px-4 text-sm font-medium text-[#5a6f5c] hover:text-[#2d5a3d]">Goat Farming</Link>
                   </div>
                 </div>
               );
