@@ -11,24 +11,48 @@ const MushroomForm = () => {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   
-  // CAPTCHA साठी State
+  // CAPTCHA State
   const [captchaText, setCaptchaText] = useState('');
   const [userInputCaptcha, setUserInputCaptcha] = useState('');
+  const [isCaptchaValid, setIsCaptchaValid] = useState(false);
 
-  // रँडम स्मॉल, कॅपिटल अक्षरे आणि अंक (a-z, A-Z, 0-9) तयार करणारे फंक्शन
   const generateCaptcha = () => {
-    const chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    // सारखे दिसणारे वर्ण (O, o, 0, I, i, L, l) वगळले आहेत
+    const upper = "ABCDEFGHJKMNPQRSTUVWXYZ";
+    const nums = "123456789";
+    const all = "ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz123456789";
+    
     let result = "";
-    for (let i = 0; i < 6; i++) {
-      result += chars.charAt(Math.floor(Math.random() * chars.length));
+    // १. पहिले अक्षर: कॅपिटल (A-Z)
+    result += upper.charAt(Math.floor(Math.random() * upper.length));
+    // २. दुसरे अक्षर: अंक (1-9)
+    result += nums.charAt(Math.floor(Math.random() * nums.length));
+    // ३. पुढील ४ अक्षरे: रँडम
+    for (let i = 0; i < 4; i++) {
+      result += all.charAt(Math.floor(Math.random() * all.length));
     }
+    
     setCaptchaText(result);
+    setUserInputCaptcha('');
+    setIsCaptchaValid(false);
   };
 
-  // पेज लोड झाल्यावर CAPTCHA तयार करा
   useEffect(() => {
     generateCaptcha();
   }, []);
+
+  // युजरने टाईप केल्यावर लगेच पडताळणी करण्यासाठी
+  const handleCaptchaChange = (e) => {
+    const value = e.target.value;
+    setUserInputCaptcha(value);
+    
+    // बरोबर जुळल्यास State अपडेट करणे
+    if (value === captchaText) {
+      setIsCaptchaValid(true);
+    } else {
+      setIsCaptchaValid(false);
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -46,17 +70,14 @@ const MushroomForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // CAPTCHA ची तंतोतंत (कॅपिटल/स्मॉल) तपासणी
-    if (userInputCaptcha !== captchaText) {
-      alert("तुम्ही टाकलेला सिक्युरिटी कोड (CAPTCHA) चुकीचा आहे. कृपया कॅपिटल आणि स्मॉल अक्षरे तपासून पुन्हा लिहा.");
-      generateCaptcha(); 
-      setUserInputCaptcha(''); 
+    if (!isCaptchaValid) {
+      alert("कृपया सिक्युरिटी कोड बरोबर टाका.");
       return; 
     }
 
     setIsSubmitting(true);
 
-    const scriptURL = "https://script.google.com/macros/s/AKfycbwovmrFMGjWOAEhdCORElWwC_rlLMQ3Mvjj0Y6mEVGU863GDJfPFWdGBebgr-sSQB8/exec"; // येथे तुमची Google Sheet ची लिंक टाका
+    const scriptURL = "YOUR_COPIED_URL_HERE"; // येथे तुमची Google Sheet ची लिंक टाका
 
     fetch(scriptURL, {
       method: 'POST',
@@ -77,6 +98,9 @@ const MushroomForm = () => {
       setIsSubmitting(false);
     });
   };
+
+  // CAPTCHA साठी मल्टी-कलर्स
+  const captchaColors = ['#991b1b', '#1e40af', '#166534', '#6b21a8', '#b45309', '#0f766e'];
 
   return (
     <div className="min-h-screen bg-[#fcfaf5] py-12 px-4 sm:px-6 lg:px-8 font-mukta">
@@ -243,50 +267,77 @@ const MushroomForm = () => {
           </section>
 
           {/* CAPTCHA Section */}
-          <section className="bg-[#f4ecd1]/50 p-6 rounded-xl border border-[#eee6d3]">
-            <label className="block text-sm font-bold mb-4 text-[#1c2a1e]">१५. सिक्युरिटी पडताळणी (Security Verification): *</label>
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+          <section className="bg-[#f4ecd1]/40 p-6 rounded-xl border border-[#eee6d3]">
+            <label className="block text-sm font-bold mb-4 text-[#1c2a1e]">१५. CAPTCHA (Verification): *</label>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
               
+              {/* Custom CAPTCHA Box */}
               <div 
-                className="bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjIiIGZpbGw9IiNlZWU2ZDMiLz48L3N2Zz4=')] 
-                px-8 py-3 text-2xl font-black tracking-[0.4em] text-[#2d5a3d] border-2 border-dashed border-[#2d5a3d] select-none pointer-events-none rounded-lg shadow-inner"
-                style={{ textDecoration: "line-through", textShadow: "2px 2px 4px rgba(0,0,0,0.1)" }}
+                className="relative overflow-hidden px-6 py-3 bg-[#ffffff] border border-[#d4a33c] rounded-lg shadow-sm select-none pointer-events-none flex items-center justify-center min-w-[160px]"
+                style={{
+                  backgroundImage: "repeating-linear-gradient(45deg, transparent, transparent 5px, rgba(0,0,0,0.06) 5px, rgba(0,0,0,0.06) 6px)"
+                }}
               >
-                {captchaText}
+                {/* Wavy Line Overlay */}
+                <svg className="absolute inset-0 w-full h-full" preserveAspectRatio="none" viewBox="0 0 100 40">
+                  <path d="M 0 20 Q 25 5, 50 20 T 100 20" stroke="rgba(0, 0, 0, 0.4)" strokeWidth="1.5" fill="none" />
+                </svg>
+
+                {/* Multi-color text */}
+                <div className="relative z-10 flex gap-[6px] text-2xl font-black tracking-wider">
+                  {captchaText.split('').map((char, index) => (
+                    <span key={index} style={{ color: captchaColors[index % captchaColors.length] }}>
+                      {char}
+                    </span>
+                  ))}
+                </div>
               </div>
               
               <button 
                 type="button" 
                 onClick={generateCaptcha} 
-                className="text-sm font-medium text-[#d4a33c] hover:text-[#2d5a3d] underline transition-colors"
+                className="text-sm font-bold text-[#2d5a3d] hover:text-[#1c2a1e] flex items-center gap-1 transition-colors bg-white px-3 py-2 border border-[#eee6d3] rounded-md shadow-sm"
               >
-                दुसरा कोड द्या (Refresh)
+                ↻ Refresh
               </button>
             </div>
             
-            <input 
-              type="text" 
-              value={userInputCaptcha}
-              onChange={(e) => setUserInputCaptcha(e.target.value)}
-              placeholder="वरील कोड जसाच्या तसा इथे लिहा" 
-              required
-              maxLength={6}
-              className="mt-4 w-full md:w-1/2 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#2d5a3d] font-bold tracking-widest" 
-            />
+            <div className="relative w-full md:w-1/2 mt-5">
+              <input 
+                type="text" 
+                value={userInputCaptcha}
+                onChange={handleCaptchaChange}
+                placeholder="CAPTCHA" 
+                required
+                maxLength={6}
+                className={`w-full p-3 pr-10 border-2 rounded-lg font-bold tracking-widest outline-none transition-colors ${
+                  isCaptchaValid ? 'border-green-500 bg-green-50/50' : 'border-gray-300 focus:border-[#2d5a3d]'
+                }`} 
+              />
+              {/* Tick Mark Indicator */}
+              {isCaptchaValid && (
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-green-600 font-black text-xl">
+                  ✓
+                </span>
+              )}
+            </div>
           </section>
 
-          <div className="pt-6 border-t border-gray-200">
-            <button 
-              type="submit" 
-              disabled={isSubmitting} 
-              className="w-full bg-[#2d5a3d] text-white text-lg font-bold py-4 rounded-xl hover:bg-[#1c2a1e] transition-colors shadow-lg shadow-[#2d5a3d]/30 disabled:opacity-70 disabled:cursor-not-allowed"
-            >
-              {isSubmitting ? "अर्ज जमा होत आहे (Submitting...)" : "प्रवेश अर्ज जमा करा (Submit Application)"}
-            </button>
-            <p className="text-xs text-center text-gray-500 mt-4">
-              * नोंदणी केल्यानंतर अधिकृत पुष्टीकरणासाठी (Confirmation) आमच्या टीमकडून संपर्क साधला जाईल.
-            </p>
-          </div>
+          {/* Submit Button - CAPTCHA बरोबर असल्यावरच दिसेल */}
+          {isCaptchaValid && (
+            <div className="pt-6 border-t border-gray-200 transition-all duration-500 ease-in-out">
+              <button 
+                type="submit" 
+                disabled={isSubmitting} 
+                className="w-full bg-[#2d5a3d] text-white text-lg font-bold py-4 rounded-xl hover:bg-[#1c2a1e] transition-colors shadow-lg shadow-[#2d5a3d]/30 disabled:opacity-70 disabled:cursor-not-allowed"
+              >
+                {isSubmitting ? "अर्ज जमा होत आहे (Submitting...)" : "प्रवेश अर्ज जमा करा (Submit Application)"}
+              </button>
+              <p className="text-xs text-center text-gray-500 mt-4">
+                * नोंदणी केल्यानंतर अधिकृत पुष्टीकरणासाठी (Confirmation) आमच्या टीमकडून संपर्क साधला जाईल.
+              </p>
+            </div>
+          )}
           
         </form>
       </div>
