@@ -19,6 +19,10 @@ const navItems = [
 const Header = () => {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  
+  // === नवीन: मोबाईल मध्ये ड्रॉपडाऊन उघडण्यासाठी/बंद करण्यासाठी State ===
+  const [activeMobileDropdown, setActiveMobileDropdown] = useState(null);
+
   const { pathname } = useLocation();
 
   useEffect(() => {
@@ -27,7 +31,16 @@ const Header = () => {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  useEffect(() => { setOpen(false); }, [pathname]);
+  // पेज बदलल्यावर मेनू आणि उघडलेले ड्रॉपडाऊन बंद करा
+  useEffect(() => { 
+    setOpen(false); 
+    setActiveMobileDropdown(null);
+  }, [pathname]);
+
+  // मोबाईलमध्ये ड्रॉपडाऊन टॉगल करण्याचे फंक्शन
+  const toggleMobileDropdown = (menuName) => {
+    setActiveMobileDropdown(activeMobileDropdown === menuName ? null : menuName);
+  };
 
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled ? 'bg-[#fdfaf3]/95 backdrop-blur-md shadow-[0_1px_0_rgba(0,0,0,0.06)]' : 'bg-transparent'}`}>
@@ -61,7 +74,7 @@ const Header = () => {
                 );
               }
               
-              // === नवीन: Training Dropdown (५ लिंक्स जोडल्या) ===
+              // Training Dropdown (Desktop)
               if (item.label === 'Training') {
                 return (
                   <div key={item.to} className="relative group">
@@ -103,37 +116,54 @@ const Header = () => {
       </div>
 
       {/* Mobile Nav */}
-      <div className={`xl:hidden overflow-hidden bg-[#fdfaf3] border-t border-[#eee6d3] transition-[max-height] duration-500 ${open ? 'max-h-[600px]' : 'max-h-0'}`}>
-        <div className="px-5 py-4 flex flex-col gap-1">
+      {/* येथे max-h-screen केले आहे जेणेकरून पूर्ण मेनू दिसेल */}
+      <div className={`xl:hidden overflow-hidden bg-[#fdfaf3] border-t border-[#eee6d3] transition-[max-height] duration-500 ${open ? 'max-h-screen' : 'max-h-0'}`}>
+        {/* overflow-y-auto मुळे लिंक्स जास्त असल्यास स्क्रोल करता येईल */}
+        <div className="px-5 py-4 flex flex-col gap-1 overflow-y-auto max-h-[75vh]">
           {navItems.map((item) => {
-            // Mobile Blog Dropdown
+            
+            // === Mobile Blog Dropdown (Accordion) ===
             if (item.label === 'Blog') {
+              const isOpen = activeMobileDropdown === 'Blog';
               return (
                 <div key={item.to} className="flex flex-col">
-                  <NavLink to={item.to} className={({ isActive }) => `py-3 px-3 rounded-lg text-base font-medium flex justify-between items-center ${isActive ? 'text-[#2d5a3d] bg-[#f2ecdb]' : 'text-[#1c2a1e]'}`}>
+                  <button 
+                    onClick={() => toggleMobileDropdown('Blog')}
+                    className={`py-3 px-3 rounded-lg text-base font-medium flex justify-between items-center w-full text-left transition-colors ${isOpen ? 'text-[#2d5a3d] bg-[#f2ecdb]' : 'text-[#1c2a1e]'}`}
+                  >
                     {item.label}
-                  </NavLink>
-                  <div className="flex flex-col ml-6 my-1 border-l-2 border-[#eee6d3]">
-                    <Link to="/blog" state={{ lang: 'English' }} className="py-2.5 px-4 text-sm font-medium text-[#5a6f5c] hover:text-[#2d5a3d]">English</Link>
-                    <Link to="/blog" state={{ lang: 'Marathi' }} className="py-2.5 px-4 text-sm font-medium text-[#5a6f5c] hover:text-[#2d5a3d]">मराठी / ಕನ್ನಡ</Link>
+                    <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
+                  </button>
+                  <div className={`overflow-hidden transition-all duration-300 ${isOpen ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'}`}>
+                    <div className="flex flex-col ml-6 my-1 border-l-2 border-[#eee6d3]">
+                      <Link to="/blog" state={{ lang: 'English' }} className="py-2.5 px-4 text-sm font-medium text-[#5a6f5c] hover:text-[#2d5a3d]">English</Link>
+                      <Link to="/blog" state={{ lang: 'Marathi' }} className="py-2.5 px-4 text-sm font-medium text-[#5a6f5c] hover:text-[#2d5a3d]">मराठी / ಕನ್ನಡ</Link>
+                    </div>
                   </div>
                 </div>
               );
             }
 
-            // === नवीन: Mobile Training Dropdown (५ लिंक्स) ===
+            // === Mobile Training Dropdown (Accordion) ===
             if (item.label === 'Training') {
+              const isOpen = activeMobileDropdown === 'Training';
               return (
                 <div key={item.to} className="flex flex-col">
-                  <div className="py-3 px-3 rounded-lg text-base font-medium flex justify-between items-center text-[#1c2a1e]">
+                  <button 
+                    onClick={() => toggleMobileDropdown('Training')}
+                    className={`py-3 px-3 rounded-lg text-base font-medium flex justify-between items-center w-full text-left transition-colors ${isOpen ? 'text-[#2d5a3d] bg-[#f2ecdb]' : 'text-[#1c2a1e]'}`}
+                  >
                     {item.label}
-                  </div>
-                  <div className="flex flex-col ml-6 my-1 border-l-2 border-[#eee6d3]">
-                    <Link to="/training/mushroom" className="py-2.5 px-4 text-sm font-medium text-[#5a6f5c] hover:text-[#2d5a3d]">Mushroom</Link>
-                    <Link to="/training/beekeeping" className="py-2.5 px-4 text-sm font-medium text-[#5a6f5c] hover:text-[#2d5a3d]">Beekeeping</Link>
-                    <Link to="/training/dairy" className="py-2.5 px-4 text-sm font-medium text-[#5a6f5c] hover:text-[#2d5a3d]">Dairy</Link>
-                    <Link to="/training/sericulture" className="py-2.5 px-4 text-sm font-medium text-[#5a6f5c] hover:text-[#2d5a3d]">Sericulture</Link>
-                    <Link to="/training/goat-farming" className="py-2.5 px-4 text-sm font-medium text-[#5a6f5c] hover:text-[#2d5a3d]">Goat Farming</Link>
+                    <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
+                  </button>
+                  <div className={`overflow-hidden transition-all duration-300 ${isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
+                    <div className="flex flex-col ml-6 my-1 border-l-2 border-[#eee6d3]">
+                      <Link to="/training/mushroom" className="py-2.5 px-4 text-sm font-medium text-[#5a6f5c] hover:text-[#2d5a3d]">Mushroom</Link>
+                      <Link to="/training/beekeeping" className="py-2.5 px-4 text-sm font-medium text-[#5a6f5c] hover:text-[#2d5a3d]">Beekeeping</Link>
+                      <Link to="/training/dairy" className="py-2.5 px-4 text-sm font-medium text-[#5a6f5c] hover:text-[#2d5a3d]">Dairy</Link>
+                      <Link to="/training/sericulture" className="py-2.5 px-4 text-sm font-medium text-[#5a6f5c] hover:text-[#2d5a3d]">Sericulture</Link>
+                      <Link to="/training/goat-farming" className="py-2.5 px-4 text-sm font-medium text-[#5a6f5c] hover:text-[#2d5a3d]">Goat Farming</Link>
+                    </div>
                   </div>
                 </div>
               );
